@@ -87,7 +87,6 @@
     }
 
     .hero-title {
-        /* Das @apply nimmt die Tailwind-Klassen und speichert sie in .hero-title */
         @apply text-4xl sm:text-6xl font-bold mb-6 text-[var(--foreground)];
     }
 

@@ -1,43 +1,77 @@
 import { fetchWithAuth } from '@/lib/api';
+import FilterBar from '@/components/FilterBar';
+import PageHeader from '@/components/PageHeader';
+import DataGrid from '@/components/DataGrid';
 import Link from 'next/link';
 
-export default async function Page() {
-    const laender = await fetchWithAuth('/laender');
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
+export default async function Page({ searchParams }: { searchParams: Promise<any> }) {
+    const filters = await searchParams;
+
+    const laenderData = await fetchWithAuth('/laender', {
+        cache: 'no-store',
+        next: { revalidate: 0 }
+    });
+
+    const safeLaender = Array.isArray(laenderData) ? laenderData : [];
+
+    const filteredLaender = safeLaender.filter((land: any) => {
+        const searchTerm = filters.q?.toLowerCase();
+        return !searchTerm || land.country?.toLowerCase().includes(searchTerm);
+    });
+
+    const queryString = new URLSearchParams(filters).toString();
 
     return (
         <main className="page-container flex-col !justify-start">
-            <div className="w-full max-w-6xl flex justify-between items-center mb-8">
-                <h1 className="!mb-0">Länder</h1>
-                <Link href="/laender/manage" className="btn-primary !w-auto">
-                    + Neues Land
-                </Link>
-            </div>
+            <PageHeader
+                title="Länder"
+                count={filteredLaender.length}
+                createLabel="+ Neues Land"
+                createHref="/laender/manage"
+            />
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 w-full max-w-6xl">
-                {laender.map((land: any) => (
-                    <div key={land.id_country} className="card relative group flex flex-col justify-between">
+            <FilterBar
+                searchPlaceholder="Land suchen..."
+                filterOptions={[]}
+            />
+
+            <DataGrid
+                key={queryString}
+                items={filteredLaender}
+                resetHref="/laender"
+                emptyMessage="Keine Länder gefunden."
+                renderItem={(land) => (
+                    <div key={land.id_country} className="card p-6 border-l-4 border-l-[var(--primary)] flex flex-col justify-between hover:shadow-xl transition-all h-full">
                         <div>
-                            <h3 className="text-xl font-bold">{land.country}</h3>
-                            <p className="text-sm text-gray-400 mt-1">ID: #{land.id_country}</p>
+                            <div className="flex justify-between items-start mb-2">
+                                <span className="text-[10px] font-mono text-gray-400 uppercase tracking-widest">ID: #{land.id_country}</span>
+                            </div>
+                            <h3 className="text-xl font-bold text-gray-900 line-clamp-1">{land.country}</h3>
+                            <div className="mt-3 h-10">
+                                <p className="text-sm text-gray-500 italic">Globaler Standort</p>
+                            </div>
                         </div>
 
-                        <div className="flex gap-2 mt-6 pt-4 border-t border-gray-50">
+                        <div className="flex justify-between items-center mt-6 pt-4 border-t border-gray-100">
                             <Link
                                 href={`/laender/${land.id_country}`}
-                                className="text-[var(--primary)] text-sm font-medium hover:underline"
+                                className="text-[var(--primary)] text-sm font-bold hover:underline"
                             >
-                                Details
+                                Details anzeigen
                             </Link>
                             <Link
                                 href={`/laender/manage/${land.id_country}`}
-                                className="text-gray-400 text-sm hover:text-gray-700 ml-auto transition-colors"
+                                className="text-gray-400 hover:text-gray-700 transition-colors"
                             >
-                                ✏️ Bearbeiten
+                                ✏️
                             </Link>
                         </div>
                     </div>
-                ))}
-            </div>
+                )}
+            />
         </main>
     );
 }
