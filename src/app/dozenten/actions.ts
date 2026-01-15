@@ -1,8 +1,5 @@
 'use server';
 
-import { fetchWithAuth } from '@/lib/api';
-import { redirect } from 'next/navigation';
-import { revalidatePath } from 'next/cache';
 import { handleCreate, handleUpdate, handleDelete } from '@/lib/actions-utils';
 
 export interface ActionState {
