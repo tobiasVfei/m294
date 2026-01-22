@@ -51,7 +51,10 @@
 
 @layer components {
     .page-container {
-        @apply flex min-h-screen items-center justify-center p-4;
+        max-width: 1280px;
+        margin-left: auto;
+        margin-right: auto;
+        width: 100%;
     }
 
     .card {

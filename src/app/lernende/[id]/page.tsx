@@ -28,9 +28,16 @@ interface LehrLink {
     ende: string;
 }
 
-interface KursLink {
+interface Kurs {
+    id_kurs: number;
+    kursnummer: string;
+    kursthema: string;
+}
+
+interface KursLernender {
     nr_lernende: number;
     nr_kurs: number;
+    note: string;
 }
 
 interface Country {
@@ -46,22 +53,32 @@ interface Lehrbetrieb {
 export default async function LernendeDetailsPage({ params }: { params: Promise<{ id: string }> }) {
     const { id } = await params;
 
-    const [personData, allKursLernende, allLaender, allLehrbetriebLernende] = await Promise.all([
+    const [personData, allKursLinks, allLaender, allLehrLinks, allKurse] = await Promise.all([
         fetchWithAuth(`/lernende/${id}`),
         fetchWithAuth('/kurse_lernende'),
         fetchWithAuth('/laender'),
-        fetchWithAuth('/lehrbetrieb_lernende')
+        fetchWithAuth('/lehrbetrieb_lernende'),
+        fetchWithAuth('/kurse')
     ]);
 
     const person = personData as Lernender;
-    const lehrverhaeltnis = (allLehrbetriebLernende as LehrLink[] || []).find((lb: LehrLink) => String(lb.nr_lernende) === id);
+    const lehrverhaeltnis = (allLehrLinks as LehrLink[] || []).find((lb: LehrLink) => String(lb.nr_lernende) === id);
 
     let lehrbetrieb: Lehrbetrieb | null = null;
     if (lehrverhaeltnis && lehrverhaeltnis.nr_lehrbetrieb) {
         lehrbetrieb = await fetchWithAuth(`/lehrbetriebe/${lehrverhaeltnis.nr_lehrbetrieb}`) as Lehrbetrieb;
     }
 
-    const kurseCount = (allKursLernende as KursLink[] || []).filter((kl: KursLink) => String(kl.nr_lernende) === id).length;
+    const studentCourses = (allKursLinks as KursLernender[] || [])
+        .filter((kl: KursLernender) => String(kl.nr_lernende) === id)
+        .map(link => {
+            const courseDetails = (allKurse as Kurs[] || []).find(k => k.id_kurs === link.nr_kurs);
+            return {
+                ...link,
+                title: courseDetails?.kursthema || 'Unbekannter Kurs'
+            };
+        });
+
     const land = (allLaender as Country[] || []).find((l: Country) => String(l.id_country) === String(person.nr_land));
 
     const formatDate = (dateString: string | undefined) => {
@@ -71,7 +88,7 @@ export default async function LernendeDetailsPage({ params }: { params: Promise<
 
     return (
         <main className="page-container flex-col !justify-start">
-            <div className="w-full max-w-7xl card p-10">
+            <div className="w-full max-w-none card p-10">
                 <div className="flex flex-col md:flex-row justify-between items-start gap-6 border-b border-gray-100 pb-8 mb-10">
                     <div className="flex items-center gap-6">
                         <div className="h-20 w-20 bg-gray-900 text-white rounded-3xl flex items-center justify-center shadow-lg">
@@ -98,7 +115,48 @@ export default async function LernendeDetailsPage({ params }: { params: Promise<
 
                 <div className="grid grid-cols-1 xl:grid-cols-4 gap-12">
                     <div className="xl:col-span-3 space-y-12">
-                        <DetailSection title="Ausbildung im Betrieb">
+                        <DetailSection title="Besuchte Kurse">
+                            <div className="grid grid-cols-1 gap-6 w-full">
+                                {studentCourses.length > 0 ? (
+                                    studentCourses.map((course, index) => (
+                                        <Link
+                                            key={index}
+                                            href={`/kurse?id_kurs=${course.nr_kurs}`}
+                                            className="group w-full p-8 bg-gray-50 rounded-2xl border border-gray-100 hover:border-[var(--primary)] hover:bg-white transition-all duration-300 shadow-sm hover:shadow-md flex justify-between items-center"
+                                        >
+                                            <div className="flex-1 min-w-0 pr-10">
+                                                <h4 className="font-bold text-2xl text-gray-900 group-hover:text-[var(--primary)] transition-colors truncate">
+                                                    {course.title}
+                                                </h4>
+                                                <p className="text-xs text-gray-400 mt-2 uppercase tracking-widest font-bold opacity-60">
+                                                    Kurs-Referenz: #{course.nr_kurs}
+                                                </p>
+                                            </div>
+
+                                            <div className="flex items-center gap-12 shrink-0">
+                                                <div className="text-right px-8 border-l border-gray-200">
+                                                    <p className="text-[10px] text-gray-400 uppercase font-black tracking-tighter mb-1">Erreichte Note</p>
+                                                    <p className={`text-4xl font-black ${Number(course.note) >= 4 ? 'text-green-600' : 'text-red-500'}`}>
+                                                        {course.note || '-'}
+                                                    </p>
+                                                </div>
+                                                <div className="p-3 rounded-full bg-white text-gray-300 group-hover:text-[var(--primary)] group-hover:bg-blue-50 transition-all border border-gray-50 shadow-inner">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                                                        <path d="m9 18 6-6-6-6"/>
+                                                    </svg>
+                                                </div>
+                                            </div>
+                                        </Link>
+                                    ))
+                                ) : (
+                                    <div className="p-10 text-center bg-gray-50 rounded-2xl border-2 border-dashed border-gray-100 text-gray-400 italic">
+                                        Noch keine Kursbelegungen vorhanden.
+                                    </div>
+                                )}
+                            </div>
+                        </DetailSection>
+
+                        <DetailSection title="Betrieb">
                             <DetailField
                                 label="Beruf"
                                 value={lehrverhaeltnis?.beruf || "Nicht definiert"}
@@ -174,7 +232,7 @@ export default async function LernendeDetailsPage({ params }: { params: Promise<
                     </div>
 
                     <div className="flex flex-col gap-8">
-                        <StatCard label="Belegte Kurse" count={kurseCount} href={`/kurse?nr_lernende=${id}&origin=lernende`} />
+                        <StatCard label="Kurse (Übersicht)" count={studentCourses.length} href={`/kurse?nr_lernende=${id}&origin=lernende`} />
                     </div>
                 </div>
             </div>
