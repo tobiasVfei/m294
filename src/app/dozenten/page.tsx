@@ -41,7 +41,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<any
     const currentKey = JSON.stringify(filters);
 
     return (
-        <main key={currentKey} className="page-container flex-col !justify-start">
+        <main key={currentKey} className="page-container mx-auto w-full max-w-[1200px] !justify-start">
             <PageHeader
                 title="Dozenten"
                 count={filteredDozenten.length}
