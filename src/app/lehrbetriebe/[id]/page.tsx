@@ -4,15 +4,30 @@ import StatCard from '@/components/StatCard';
 import DetailField from '@/components/DetailField';
 import DetailSection from '@/components/DetailSection';
 
+interface Lehrbetrieb {
+    id_lehrbetrieb: number;
+    firma: string;
+    strasse: string;
+    plz: string;
+    ort: string;
+}
+
+interface LehrLink {
+    nr_lehrbetrieb: number;
+    nr_lernende: number;
+}
+
 export default async function LehrbetriebDetailsPage({ params }: { params: Promise<{ id: string }> }) {
     const { id } = await params;
 
-    const [betrieb, allLernende] = await Promise.all([
+    const [betriebData, allLehrLinks] = await Promise.all([
         fetchWithAuth(`/lehrbetriebe/${id}`),
-        fetchWithAuth('/lernende')
+        fetchWithAuth('/lehrbetrieb_lernende')
     ]);
 
-    const lernendeCount = (allLernende || []).filter((l: any) => String(l.id_lehrbetrieb) === id).length;
+    const betrieb = betriebData as Lehrbetrieb;
+    const lehrLinks = (allLehrLinks as LehrLink[]) || [];
+    const lernendeCount = lehrLinks.filter((link: LehrLink) => String(link.nr_lehrbetrieb) === id).length;
 
     return (
         <main className="page-container flex-col !justify-start">
@@ -21,7 +36,7 @@ export default async function LehrbetriebDetailsPage({ params }: { params: Promi
                 <div className="flex flex-col md:flex-row justify-between items-start gap-6 border-b border-gray-100 pb-8 mb-10">
                     <div className="flex items-center gap-6">
                         <div className="h-20 w-20 bg-gray-900 text-white rounded-3xl flex items-center justify-center shadow-lg">
-                            <svg xmlns="http://www.w3.org/2000/center" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                                 <path d="M3 21h18"/><path d="M3 7v1a3 3 0 0 0 6 0V7m0 1a3 3 0 0 0 6 0V7m0 1a3 3 0 0 0 6 0V7H3l2-4h14l2 4"/>
                             </svg>
                         </div>
@@ -38,10 +53,7 @@ export default async function LehrbetriebDetailsPage({ params }: { params: Promi
                         </div>
                     </div>
 
-                    <Link
-                        href={`/lehrbetriebe/manage/${id}`}
-                        className="btn-primary !w-full md:!w-auto px-8 py-3 flex items-center justify-center gap-3"
-                    >
+                    <Link href={`/lehrbetriebe/manage/${id}`} className="btn-primary !w-full md:!w-auto px-8 py-3 flex items-center justify-center gap-3">
                         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                             <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/>
                         </svg>
@@ -51,7 +63,6 @@ export default async function LehrbetriebDetailsPage({ params }: { params: Promi
 
                 <div className="grid grid-cols-1 xl:grid-cols-4 gap-12">
                     <div className="xl:col-span-3 space-y-12">
-
                         <DetailSection title="Standort & Adresse">
                             <DetailField
                                 label="Strasse"
@@ -74,7 +85,7 @@ export default async function LehrbetriebDetailsPage({ params }: { params: Promi
                         <StatCard
                             label="Lernende im Betrieb"
                             count={lernendeCount}
-                            href={`/lernende?id_lehrbetrieb=${id}&origin=lehrbetriebe`}
+                            href={`/lernende?nr_lehrbetrieb=${id}&origin=lehrbetriebe`}
                         />
                     </div>
                 </div>
