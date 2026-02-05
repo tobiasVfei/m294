@@ -42,7 +42,6 @@ export default async function Page({
 }) {
     const filters = await searchParams;
 
-    // Laden der notwendigen Daten für Filter und Anzeige
     const [allItems, dozenten, allLernende, allKursLinks] = await Promise.all([
         fetchWithAuth('/kurse', { cache: 'no-store' }),
         fetchWithAuth('/dozenten', { next: { revalidate: 3600 } }),

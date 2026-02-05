@@ -38,7 +38,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<any
     const queryString = new URLSearchParams(filters).toString();
 
     return (
-        <main className="page-container flex-col !justify-start">
+        <main className="page-container flex-col flex-col !justify-start px-6 md:px-10">
             <PageHeader
                 title="Lehrbetriebe"
                 count={filteredBetriebe.length}

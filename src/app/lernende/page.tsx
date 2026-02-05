@@ -107,7 +107,7 @@ export default async function Page({
         .map(b => ({ label: b, value: b }));
 
     return (
-        <main className="page-container mx-auto w-full !justify-start">
+        <main className="page-container mx-auto w-full flex-col !justify-start px-6 md:px-10">
             <PageHeader
                 title="Lernende"
                 count={filteredItems.length}

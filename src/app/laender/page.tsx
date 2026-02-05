@@ -25,7 +25,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<any
     const queryString = new URLSearchParams(filters).toString();
 
     return (
-        <main className="page-container mx-auto w-full max-w-[1200px] !justify-start">
+        <main className="page-container mx-auto w-full max-w-[1200px] flex-col !justify-start px-6 md:px-10">
             <PageHeader
                 title="Länder"
                 count={filteredLaender.length}
