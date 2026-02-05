@@ -1,8 +1,8 @@
 import { fetchWithAuth } from '@/lib/api';
 import FilterBar from '@/components/FilterBar';
 import PageHeader from '@/components/PageHeader';
-import DataGrid from '@/components/DataGrid';
-import Link from 'next/link';
+import DataTable from '@/components/DataTable';
+import DataRow from '@/components/DataRow';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
@@ -66,37 +66,24 @@ export default async function Page({ searchParams }: { searchParams: Promise<any
                 ]}
             />
 
-            <DataGrid
-                items={filteredDozenten}
-                resetHref="/dozenten"
+            <DataTable
+                headers={['ID', 'Name', 'E-Mail', 'Ort', 'Aktionen']}
+                isEmpty={filteredDozenten.length === 0}
                 emptyMessage="Keine Dozenten gefunden."
-                renderItem={(dozent) => (
-                    <div key={dozent.id_dozent} className="card p-6 border-l-4 border-l-[var(--primary)] flex flex-col justify-between hover:shadow-xl transition-all h-full">
-                        <div>
-                            <div className="flex justify-between items-start mb-2">
-                                <span className="text-[10px] font-mono text-gray-400 uppercase tracking-widest">ID: #{dozent.id_dozent}</span>
-                                <span className="text-[10px] bg-gray-100 px-2 py-1 rounded text-gray-500 font-mono uppercase">
-                                    {dozent.geschlecht}
-                                </span>
-                            </div>
-                            <h3 className="text-xl font-bold text-gray-900 line-clamp-1">{dozent.vorname} {dozent.nachname}</h3>
-                            <div className="mt-3 h-10">
-                                <p className="text-sm text-gray-500 truncate">{dozent.ort || 'Kein Ort angegeben'}</p>
-                                <p className="text-xs text-[var(--primary)] font-medium truncate">{dozent.email}</p>
-                            </div>
-                        </div>
-
-                        <div className="flex gap-2 mt-6 pt-4 border-t border-gray-100">
-                            <Link href={`/dozenten/${dozent.id_dozent}`} className="text-[var(--primary)] text-sm font-bold hover:underline">
-                                Profil öffnen
-                            </Link>
-                            <Link href={`/dozenten/manage/${dozent.id_dozent}`} className="text-gray-400 text-sm hover:text-gray-700 ml-auto transition-colors">
-                                ✏️
-                            </Link>
-                        </div>
-                    </div>
-                )}
-            />
+            >
+                {filteredDozenten.map((dozent: any) => (
+                    <DataRow
+                        key={dozent.id_dozent}
+                        id={dozent.id_dozent}
+                        title={`${dozent.vorname} ${dozent.nachname}`}
+                        subtitle={dozent.geschlecht === 'W' ? 'Weiblich' : 'Männlich'}
+                        details={dozent.email}
+                        info={dozent.ort || 'Kein Ort angegeben'}
+                        viewHref={`/dozenten/${dozent.id_dozent}`}
+                        editHref={`/dozenten/manage/${dozent.id_dozent}`}
+                    />
+                ))}
+            </DataTable>
         </main>
     );
 }

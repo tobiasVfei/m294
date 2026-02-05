@@ -1,6 +1,10 @@
 import { fetchWithAuth } from '@/lib/api';
 import Link from 'next/link';
 import StatCard from '@/components/StatCard';
+import DetailHeader from '@/components/DetailHeader';
+import { Icons } from '@/lib/icons';
+
+export const dynamic = 'force-dynamic';
 
 export default async function LandDetailsPage({ params }: { params: Promise<{ id: string }> }) {
     const { id } = await params;
@@ -31,21 +35,15 @@ export default async function LandDetailsPage({ params }: { params: Promise<{ id
     ];
 
     return (
-        <main className="page-container flex-col !justify-start">
-            <div className="w-full max-w-4xl card p-8">
-                <div className="flex justify-between items-start border-b border-gray-100 pb-6 mb-8">
-                    <div>
-                        <h1 className="!text-left !mb-1 text-4xl font-extrabold">{land.country}</h1>
-                        <p className="text-gray-400 text-sm font-medium">Datenbank-ID: {land.id_country}</p>
-                    </div>
+        <main className="page-container flex-col !justify-start py-10">
+            <div className="card !max-w-4xl p-10 mx-auto">
 
-                    <Link
-                        href={`/laender/manage/${id}`}
-                        className="text-sm border border-gray-200 px-4 py-2 rounded-lg hover:bg-gray-50 flex items-center gap-2 transition-all font-medium"
-                    >
-                        ✏️ Land bearbeiten
-                    </Link>
-                </div>
+                <DetailHeader
+                    title={land.country}
+                    subtitle={`Datenbank-ID: ${land.id_country}`}
+                    icon={<Icons.Globe size={40} />}
+                    editHref={`/laender/manage/${id}`}
+                />
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     {stats.map((stat) => (
@@ -58,12 +56,12 @@ export default async function LandDetailsPage({ params }: { params: Promise<{ id
                     ))}
                 </div>
 
-                <div className="mt-12 pt-8 border-t border-gray-50">
-                    <Link href="/laender" className="text-gray-400 hover:text-[var(--primary)] flex items-center gap-2 text-sm font-semibold transition-colors">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                            <path d="m15 18-6-6 6-6"/>
-                        </svg>
-                        Zurück zur Übersicht
+                <div className="mt-16 pt-8 border-t border-gray-100">
+                    <Link href="/laender" className="back-link group">
+                        <div className="p-2 rounded-full bg-gray-50 group-hover:bg-gray-100 transition-colors">
+                            <Icons.ChevronLeft />
+                        </div>
+                        ZURÜCK ZUR ÜBERSICHT
                     </Link>
                 </div>
             </div>

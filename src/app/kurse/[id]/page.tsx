@@ -3,6 +3,8 @@ import Link from 'next/link';
 import StatCard from '@/components/StatCard';
 import DetailField from '@/components/DetailField';
 import DetailSection from '@/components/DetailSection';
+import DetailHeader from '@/components/DetailHeader';
+import { Icons } from '@/lib/icons';
 
 export default async function KursDetailsPage({ params }: { params: Promise<{ id: string }> }) {
     const { id } = await params;
@@ -25,42 +27,19 @@ export default async function KursDetailsPage({ params }: { params: Promise<{ id
     };
 
     return (
-        <main className="page-container flex-col !justify-start">
-            <div className="w-full max-w-7xl card p-10">
+        <main className="page-container flex-col !justify-start py-10">
+            <div className="card p-10">
 
-                <div className="flex flex-col md:flex-row justify-between items-start gap-6 border-b border-gray-100 pb-8 mb-10">
-                    <div className="flex items-center gap-6">
-                        <div className="h-20 w-20 bg-gray-900 text-white rounded-3xl flex items-center justify-center shadow-lg">
-                            <svg xmlns="http://www.w3.org/2000/center" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                                <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"/><path d="M8 7h6"/><path d="M8 11h8"/>
-                            </svg>
-                        </div>
-                        <div>
-                            <div className="flex flex-wrap items-center gap-3">
-                                <h1 className="!text-left !mb-0 text-4xl font-black text-gray-900">
-                                    {kurs.kursthema}
-                                </h1>
-                                <span className="px-3 py-1 bg-gray-100 text-gray-800 text-[10px] font-black rounded uppercase tracking-widest">
-                                    {kurs.kursnummer}
-                                </span>
-                            </div>
-                            <p className="text-gray-400 text-base font-medium mt-2">Kurs-ID: #{kurs.id_kurs}</p>
-                        </div>
-                    </div>
+                <DetailHeader
+                    title={kurs.kursthema}
+                    subtitle={`Kurs-ID: #${kurs.id_kurs}`}
+                    icon={<Icons.Book size={40} />}
+                    editHref={`/kurse/manage/${id}`}
+                    badge={kurs.kursnummer}
+                />
 
-                    <Link
-                        href={`/kurse/manage/${id}`}
-                        className="btn-primary !w-full md:!w-auto px-8 py-3 flex items-center justify-center gap-3"
-                    >
-                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                            <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/>
-                        </svg>
-                        Kurs bearbeiten
-                    </Link>
-                </div>
-
-                <div className="grid grid-cols-1 xl:grid-cols-4 gap-12">
-                    <div className="xl:col-span-3 space-y-12">
+                <div className="detail-grid-layout">
+                    <div className="detail-main-content">
 
                         <section className="w-full">
                             <h3 className="text-[11px] font-black text-gray-400 uppercase tracking-[0.2em] mb-5 flex items-center gap-3">
@@ -79,22 +58,22 @@ export default async function KursDetailsPage({ params }: { params: Promise<{ id
                                 label="Verantwortlicher Dozent"
                                 value={dozent ? `${dozent.vorname} ${dozent.nachname}` : `ID: ${kurs.nr_dozent}`}
                                 href={dozent ? `/dozenten/${dozent.id_dozent}` : undefined}
-                                icon={<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>}
+                                icon={<Icons.User />}
                             />
                             <DetailField
                                 label="Dauer"
                                 value={kurs.dauer || "Nicht angegeben"}
-                                icon={<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>}
+                                icon={<Icons.Clock />}
                             />
                             <DetailField
                                 label="Zeitraum"
                                 value={`${formatDate(kurs.startdatum)} - ${formatDate(kurs.enddatum)}`}
-                                icon={<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg>}
+                                icon={<Icons.Calendar />}
                             />
                         </DetailSection>
                     </div>
 
-                    <div className="flex flex-col gap-8">
+                    <div className="detail-sidebar">
                         <StatCard
                             label="Eingeschriebene Personen"
                             count={teilnehmerCount}
@@ -104,9 +83,9 @@ export default async function KursDetailsPage({ params }: { params: Promise<{ id
                 </div>
 
                 <div className="mt-16 pt-8 border-t border-gray-100">
-                    <Link href="/kurse" className="text-gray-400 hover:text-gray-900 flex items-center gap-3 text-sm font-black transition-colors group">
+                    <Link href="/kurse" className="back-link group">
                         <div className="p-2 rounded-full bg-gray-50 group-hover:bg-gray-100 transition-colors">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+                            <Icons.ChevronLeft />
                         </div>
                         ZURÜCK ZUR ÜBERSICHT
                     </Link>

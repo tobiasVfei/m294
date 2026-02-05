@@ -1,11 +1,12 @@
 'use server';
 
 import { handleCreate, handleUpdate, handleDelete } from '@/lib/actions-utils';
+import { revalidatePath } from 'next/cache';
+import { redirect } from 'next/navigation';
 
 export interface ActionState {
-    status: 'success' | 'error' | 'idle';
-    message: string;
-    data?: { id_lernende?: number } & Record<string, unknown>;
+    error: string | null;
+    success: boolean | null;
 }
 
 export async function createLernende(prevState: ActionState, formData: FormData): Promise<ActionState> {
@@ -24,23 +25,27 @@ export async function createLernende(prevState: ActionState, formData: FormData)
         birthdate: formData.get('birthdate'),
     };
 
-    const response = (await handleCreate('/lernende', lernende, '/lernende')) as unknown as ActionState;
+    try {
+        const response = await handleCreate('/lernende', lernende, '/lernende');
 
-    if (response.status === 'success' && formData.get('id_lehrbetrieb')) {
-        const newLernendeId = response.data?.id_lernende;
+        if (formData.get('nr_lehrbetrieb')) {
+            const newId = (response as any).id_lernende;
+            const lehrverhaeltnis = {
+                nr_lehrbetrieb: Number(formData.get('nr_lehrbetrieb')),
+                nr_lernende: newId,
+                start: formData.get('lehr_start'),
+                ende: formData.get('lehr_ende'),
+                beruf: formData.get('beruf')
+            };
+            await handleCreate('/lehrbetrieb_lernende', lehrverhaeltnis, '/lernende');
+        }
 
-        const lehrverhaeltnis = {
-            nr_lehrbetrieb: Number(formData.get('id_lehrbetrieb')),
-            nr_lernende: newLernendeId,
-            start: formData.get('start'),
-            ende: formData.get('ende'),
-            beruf: formData.get('beruf')
-        };
-
-        await handleCreate('/lehrbetrieb_lernende', lehrverhaeltnis, '/lernende');
+        revalidatePath('/lernende');
+    } catch (e: any) {
+        return { error: e.message, success: null };
     }
 
-    return response;
+    redirect('/lernende');
 }
 
 export async function updateLernende(prevState: ActionState, formData: FormData): Promise<ActionState> {
@@ -61,9 +66,27 @@ export async function updateLernende(prevState: ActionState, formData: FormData)
         birthdate: formData.get('birthdate'),
     };
 
-    return (await handleUpdate('/lernende', id, lernende, '/lernende')) as unknown as ActionState;
+    try {
+        await handleUpdate('/lernende', id, lernende, '/lernende');
+
+        const entries = Array.from(formData.entries());
+        for (const [key, value] of entries) {
+            if (key.startsWith('grade_kurs_')) {
+                const kursId = key.replace('grade_kurs_', '');
+                await handleUpdate('/kurse_lernende', `${id}/${kursId}`, { note: value }, '/lernende');
+            }
+        }
+
+        revalidatePath(`/lernende/${id}`);
+        revalidatePath('/lernende');
+    } catch (e: any) {
+        return { error: e.message, success: null };
+    }
+
+    redirect(`/lernende/${id}`);
 }
 
 export async function deleteLernende(id: number) {
-    return await handleDelete('/lernende', id, '/lernende');
+    await handleDelete('/lernende', id, '/lernende');
+    redirect('/lernende');
 }

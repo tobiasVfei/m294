@@ -48,19 +48,42 @@
     }
 }
 
-
 @layer components {
     .page-container {
-        max-width: 1280px;
-        margin-left: auto;
-        margin-right: auto;
-        width: 100%;
+        @apply w-full max-w-7xl mx-auto px-4;
     }
 
     .card {
-        @apply w-full max-w-md p-8 space-y-6 rounded-xl shadow-lg transition-colors
+        @apply w-full p-8 rounded-xl shadow-lg transition-colors
         bg-[var(--card-bg)] border border-[var(--card-border)]
         text-[var(--foreground)];
+    }
+
+    .detail-grid-layout {
+        @apply grid grid-cols-1 xl:grid-cols-4 gap-12 w-full;
+    }
+
+    .detail-main-content {
+        @apply xl:col-span-3 space-y-12;
+    }
+
+    .detail-sidebar {
+        @apply flex flex-col gap-8;
+    }
+
+    .badge {
+        @apply px-3 py-1 bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200
+        text-[10px] font-black rounded uppercase tracking-widest;
+    }
+
+    .icon-box-large {
+        @apply h-20 w-20 bg-gray-900 text-white rounded-3xl flex items-center justify-center shadow-lg;
+    }
+
+    /* FIX: 'group' wurde entfernt, da es nur direkt im HTML (JSX) stehen darf */
+    .back-link {
+        @apply text-gray-400 hover:text-[var(--foreground)] flex items-center gap-3
+        text-sm font-black transition-colors uppercase tracking-wider no-underline;
     }
 
     .dashboard-card {
@@ -82,11 +105,14 @@
     }
 
     .btn-primary {
-        @apply w-full py-3 px-4 bg-[var(--primary)] text-white font-medium rounded-lg hover:bg-[var(--primary-hover)] focus:ring-4 focus:ring-blue-300 disabled:opacity-50 disabled:cursor-not-allowed transition-colors shadow-sm;
+        @apply w-full py-3 px-4 bg-[var(--primary)] text-white font-medium rounded-lg
+        hover:bg-[var(--primary-hover)] focus:ring-4 focus:ring-blue-300
+        disabled:opacity-50 disabled:cursor-not-allowed transition-colors shadow-sm;
     }
 
     .error-box {
-        @apply p-4 text-sm text-red-700 bg-red-50 rounded-lg border border-red-200 dark:bg-red-900/30 dark:text-red-200 dark:border-red-800 flex items-center gap-2;
+        @apply p-4 text-sm text-red-700 bg-red-50 rounded-lg border border-red-200
+        dark:bg-red-900/30 dark:text-red-200 dark:border-red-800 flex items-center gap-2;
     }
 
     .hero-title {
@@ -95,9 +121,5 @@
 
     .hero-subtitle {
         @apply text-lg opacity-80 mb-10 max-w-2xl mx-auto;
-    }
-
-    .logo-text {
-        @apply text-[var(--primary)];
     }
 }

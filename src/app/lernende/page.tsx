@@ -1,8 +1,8 @@
 import { fetchWithAuth } from '@/lib/api';
 import FilterBar from '@/components/FilterBar';
 import PageHeader from '@/components/PageHeader';
-import DataGrid from '@/components/DataGrid';
-import Link from 'next/link';
+import DataTable from '@/components/DataTable';
+import DataRow from '@/components/DataRow';
 
 interface Lernender {
     id_lernende: number;
@@ -30,6 +30,16 @@ interface LehrLink {
     beruf: string;
 }
 
+interface Kurs {
+    id_kurs: number;
+    kursthema: string;
+}
+
+interface KursLernende {
+    nr_lernende: number;
+    nr_kurs: number;
+}
+
 export const dynamic = 'force-dynamic';
 
 export default async function Page({
@@ -39,23 +49,27 @@ export default async function Page({
 }) {
     const filters = await searchParams;
 
-    const [allItems, laender, allLehrLinks, allLehrbetriebe] = await Promise.all([
-        fetchWithAuth('/lernende', { cache: 'no-store' }),
-        fetchWithAuth('/laender', { next: { revalidate: 3600 } }),
-        fetchWithAuth('/lehrbetrieb_lernende', { cache: 'no-store' }),
-        fetchWithAuth('/lehrbetriebe', { next: { revalidate: 3600 } })
+    const [allItems, laender, allLehrLinks, allLehrbetriebe, allKurse, allKursLinks] = await Promise.all([
+        fetchWithAuth('/lernende'),
+        fetchWithAuth('/laender'),
+        fetchWithAuth('/lehrbetrieb_lernende'),
+        fetchWithAuth('/lehrbetriebe'),
+        fetchWithAuth('/kurse'),
+        fetchWithAuth('/kurse_lernende')
     ]);
 
     const safeItems: Lernender[] = Array.isArray(allItems) ? allItems : [];
     const safeLehrLinks: LehrLink[] = Array.isArray(allLehrLinks) ? allLehrLinks : [];
+    const safeKursLinks: KursLernende[] = Array.isArray(allKursLinks) ? allKursLinks : [];
 
     const filteredItems = safeItems.filter((item: Lernender) => {
         const searchTerm = typeof filters.q === 'string' ? filters.q.toLowerCase() : undefined;
         const landFilter = filters.nr_land;
         const lehrbetriebFilter = filters.nr_lehrbetrieb;
         const berufFilter = filters.beruf;
+        const kursFilter = filters.nr_kurs;
 
-        const rel = safeLehrLinks.find(l => String(l.nr_lernende) === String(item.id_lernende));
+        const lehrRel = safeLehrLinks.find(l => String(l.nr_lernende) === String(item.id_lernende));
 
         const matchesSearch = !searchTerm ||
             item.vorname?.toLowerCase().includes(searchTerm) ||
@@ -63,10 +77,14 @@ export default async function Page({
             item.email?.toLowerCase().includes(searchTerm);
 
         const matchesLand = !landFilter || String(item.nr_land) === String(landFilter);
-        const matchesLehrbetrieb = !lehrbetriebFilter || String(rel?.nr_lehrbetrieb) === String(lehrbetriebFilter);
-        const matchesBeruf = !berufFilter || rel?.beruf === berufFilter;
+        const matchesLehrbetrieb = !lehrbetriebFilter || String(lehrRel?.nr_lehrbetrieb) === String(lehrbetriebFilter);
+        const matchesBeruf = !berufFilter || lehrRel?.beruf === berufFilter;
 
-        return matchesSearch && matchesLand && matchesLehrbetrieb && matchesBeruf;
+        const matchesKurs = !kursFilter || safeKursLinks.some(kl =>
+            String(kl.nr_lernende) === String(item.id_lernende) && String(kl.nr_kurs) === String(kursFilter)
+        );
+
+        return matchesSearch && matchesLand && matchesLehrbetrieb && matchesBeruf && matchesKurs;
     });
 
     const landOptions = (laender as Country[] || []).map((l: Country) => ({
@@ -79,12 +97,17 @@ export default async function Page({
         value: lb.id_lehrbetrieb.toString()
     }));
 
+    const kursOptions = (allKurse as Kurs[] || []).map((k: Kurs) => ({
+        label: k.kursthema,
+        value: k.id_kurs.toString()
+    }));
+
     const berufOptions = Array.from(new Set(safeLehrLinks.map((l: LehrLink) => l.beruf)))
         .filter(Boolean)
         .map(b => ({ label: b, value: b }));
 
     return (
-        <main className="page-container mx-auto w-full max-w-[1200px] !justify-start">
+        <main className="page-container mx-auto w-full !justify-start">
             <PageHeader
                 title="Lernende"
                 count={filteredItems.length}
@@ -99,41 +122,28 @@ export default async function Page({
                 filterOptions={[
                     { key: 'nr_land', label: 'Land', options: landOptions },
                     { key: 'nr_lehrbetrieb', label: 'Lehrbetrieb', options: lehrbetriebOptions },
+                    { key: 'nr_kurs', label: 'Kurs', options: kursOptions },
                     { key: 'beruf', label: 'Beruf', options: berufOptions }
                 ]}
             />
 
-            <DataGrid
-                items={filteredItems}
-                resetHref="/lernende"
-                renderItem={(person: Lernender) => (
-                    <div key={person.id_lernende} className="card p-6 border-l-4 border-l-[var(--primary)] flex flex-col justify-between hover:shadow-xl transition-all h-full">
-                        <div>
-                            <div className="flex justify-between items-start mb-2">
-                                <span className="text-[10px] font-mono text-gray-400 uppercase tracking-widest">ID: #{person.id_lernende}</span>
-                                <span className="text-[10px] bg-gray-100 px-2 py-1 rounded text-gray-500 font-mono uppercase">
-                                    {person.geschlecht}
-                                </span>
-                            </div>
-                            <h3 className="text-xl font-bold text-gray-900 line-clamp-1">
-                                {person.vorname} {person.nachname}
-                            </h3>
-                            <div className="mt-3 h-10">
-                                <p className="text-sm text-gray-500 truncate">{person.ort || 'Kein Wohnort'}</p>
-                                <p className="text-xs text-[var(--primary)] font-medium truncate">{person.email}</p>
-                            </div>
-                        </div>
-                        <div className="flex justify-between items-center mt-6 pt-4 border-t border-gray-100">
-                            <Link href={`/lernende/${person.id_lernende}`} className="text-[var(--primary)] text-sm font-bold hover:underline">
-                                Profil anzeigen
-                            </Link>
-                            <Link href={`/lernende/manage/${person.id_lernende}`} className="text-gray-400 hover:text-gray-700 transition-colors">
-                                ✏️
-                            </Link>
-                        </div>
-                    </div>
-                )}
-            />
+            <DataTable
+                headers={['ID', 'Name', 'Kontakt', 'Wohnort', 'Aktionen']}
+                isEmpty={filteredItems.length === 0}
+            >
+                {filteredItems.map((person) => (
+                    <DataRow
+                        key={person.id_lernende}
+                        id={person.id_lernende}
+                        title={`${person.vorname} ${person.nachname}`}
+                        subtitle={person.geschlecht === 'w' ? 'Weiblich' : 'Männlich'}
+                        details={person.email}
+                        info={person.ort || '-'}
+                        viewHref={`/lernende/${person.id_lernende}`}
+                        editHref={`/lernende/manage/${person.id_lernende}`}
+                    />
+                ))}
+            </DataTable>
         </main>
     );
 }

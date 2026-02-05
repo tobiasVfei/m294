@@ -9,8 +9,8 @@ export default async function Home() {
         : "Verwalten Sie Ihre Kurse, Dozenten und Lernenden zentral und effizient.";
 
     return (
-        <main className="page-container flex-col text-center">
-            <div className="max-w-2xl">
+        <main className="page-container flex flex-col items-center justify-center min-h-[calc(100vh-120px)] text-center px-4">
+            <div className="max-w-3xl">
                 <h1 className="hero-title">
                     {isLoggedIn ? (
                         "Willkommen zurück!"
@@ -25,7 +25,7 @@ export default async function Home() {
                     {subtitle}
                 </p>
 
-                <div className="flex items-center justify-center gap-6">
+                <div className="flex flex-wrap items-center justify-center gap-6">
                     {isLoggedIn ? (
                         <Link href="/dashboard" className="btn-primary w-auto px-8">
                             Zum Dashboard

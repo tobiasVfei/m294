@@ -3,101 +3,126 @@
 import { useActionState } from 'react';
 import { updateLernende, deleteLernende, ActionState } from '../../actions';
 import Link from 'next/link';
+import { Icons } from '@/lib/icons';
 
-export default function EditLernendeForm({ person }: { person: any }) {
+export default function EditLernendeForm({ person, allKurse, kursLinks, laender, lehrbetriebe, lehrverhaeltnis }: any) {
     const initialState: ActionState = { error: null, success: null };
     const [state, formAction, isPending] = useActionState(updateLernende, initialState);
 
-    const deleteWithId = deleteLernende.bind(null, person.id_lernende);
-
     return (
-        <div className="card max-w-2xl">
-            <div className="flex justify-between items-center mb-6">
-                <h1 className="text-2xl font-bold">Lernende Person bearbeiten</h1>
-
-                <form action={deleteWithId}>
-                    <button
-                        type="submit"
-                        className="text-red-600 hover:text-red-800 text-sm border border-red-200 bg-red-50 px-3 py-1 rounded cursor-pointer"
-                        onClick={(e) => {
-                            if (!confirm('Diese Person wirklich löschen?')) {
-                                e.preventDefault();
-                            }
-                        }}
-                    >
-                        🗑️ Löschen
-                    </button>
-                </form>
+        <div className="card !max-w-5xl">
+            <div className="flex justify-between items-center mb-10 pb-6 border-b border-gray-100">
+                <h1 className="text-3xl font-black text-gray-900 uppercase tracking-tight">Profil bearbeiten</h1>
+                <Link href={`/lernende/${person.id_lernende}`} className="text-sm font-bold text-gray-400 hover:text-gray-600">Abbrechen</Link>
             </div>
 
-            {state?.error && <div className="error-box mb-4">{state.error}</div>}
+            {state?.error && (
+                <div className="bg-red-50 text-red-700 p-4 rounded-xl mb-8 font-bold border border-red-100">
+                    {state.error}
+                </div>
+            )}
 
-            <form action={formAction} className="space-y-4">
+            <form action={formAction} className="space-y-12">
                 <input type="hidden" name="id_lernende" value={person.id_lernende} />
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <label className="input-label">Vorname</label>
-                        <input
-                            type="text"
-                            name="vorname"
-                            defaultValue={person.vorname}
-                            required
-                            className="input-field"
-                        />
-                    </div>
-                    <div>
-                        <label className="input-label">Nachname</label>
-                        <input
-                            type="text"
-                            name="nachname"
-                            defaultValue={person.nachname}
-                            required
-                            className="input-field"
-                        />
-                    </div>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div className="md:col-span-1">
-                        <label className="input-label">PLZ</label>
-                        <input
-                            type="text"
-                            name="plz"
-                            defaultValue={person.plz}
-                            className="input-field"
-                        />
-                    </div>
-                    <div className="md:col-span-2">
-                        <label className="input-label">Ort</label>
-                        <input
-                            type="text"
-                            name="ort"
-                            defaultValue={person.ort}
-                            required
-                            className="input-field"
-                        />
+                <div className="space-y-6">
+                    <h3 className="text-[11px] font-black text-[var(--primary)] uppercase tracking-[0.2em] flex items-center gap-3">
+                        <span className="h-px w-8 bg-blue-200"></span>Persönliche Daten
+                    </h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <div><label className="input-label">Vorname</label><input type="text" name="vorname" defaultValue={person.vorname} className="input-field" /></div>
+                        <div><label className="input-label">Nachname</label><input type="text" name="nachname" defaultValue={person.nachname} className="input-field" /></div>
+                        <div>
+                            <label className="input-label">Geschlecht</label>
+                            <select name="geschlecht" defaultValue={person.geschlecht} className="input-field">
+                                <option value="m">Männlich</option>
+                                <option value="w">Weiblich</option>
+                            </select>
+                        </div>
+                        <div><label className="input-label">Geburtsdatum</label><input type="date" name="birthdate" defaultValue={person.birthdate?.split('T')[0]} className="input-field" /></div>
+                        <div>
+                            <label className="input-label">Land</label>
+                            <select name="nr_land" defaultValue={person.nr_land} className="input-field">
+                                {laender.map((l: any) => <option key={l.id_country} value={l.id_country}>{l.country}</option>)}
+                            </select>
+                        </div>
                     </div>
                 </div>
 
-                <div>
-                    <label className="input-label">Lehrbetrieb ID</label>
-                    <input
-                        type="number"
-                        name="id_lehrbetrieb"
-                        defaultValue={person.id_lehrbetrieb}
-                        required
-                        className="input-field"
-                    />
+                <div className="space-y-6">
+                    <h3 className="text-[11px] font-black text-[var(--primary)] uppercase tracking-[0.2em] flex items-center gap-3">
+                        <span className="h-px w-8 bg-blue-200"></span>Kontakt & Adresse
+                    </h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div><label className="input-label">E-Mail (Geschäftlich)</label><input type="email" name="email" defaultValue={person.email} className="input-field" /></div>
+                        <div><label className="input-label">E-Mail (Privat)</label><input type="email" name="email_privat" defaultValue={person.email_privat} className="input-field" /></div>
+                        <div><label className="input-label">Strasse</label><input type="text" name="strasse" defaultValue={person.strasse} className="input-field" /></div>
+                        <div className="grid grid-cols-3 gap-2">
+                            <div className="col-span-1"><label className="input-label">PLZ</label><input type="text" name="plz" defaultValue={person.plz} className="input-field" /></div>
+                            <div className="col-span-2"><label className="input-label">Ort</label><input type="text" name="ort" defaultValue={person.ort} className="input-field" /></div>
+                        </div>
+                        <div><label className="input-label">Telefon</label><input type="text" name="telefon" defaultValue={person.telefon} className="input-field" /></div>
+                        <div><label className="input-label">Handy</label><input type="text" name="handy" defaultValue={person.handy} className="input-field" /></div>
+                    </div>
                 </div>
 
-                <div className="flex justify-end gap-2 mt-6">
-                    <Link href={`/lernende/${person.id_lernende}`} className="px-4 py-2 border rounded text-gray-600 hover:bg-gray-50 flex items-center">
-                        Abbrechen
-                    </Link>
-                    <button type="submit" disabled={isPending} className="btn-primary !w-auto">
-                        {isPending ? 'Speichert...' : 'Speichern'}
+                <div className="space-y-6">
+                    <h3 className="text-[11px] font-black text-[var(--primary)] uppercase tracking-[0.2em] flex items-center gap-3">
+                        <span className="h-px w-8 bg-blue-200"></span>Ausbildung
+                    </h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-6 bg-gray-50 rounded-2xl border border-gray-100">
+                        <div className="md:col-span-2">
+                            <label className="input-label">Lehrbetrieb</label>
+                            <select name="nr_lehrbetrieb" defaultValue={lehrverhaeltnis?.nr_lehrbetrieb} className="input-field">
+                                <option value="">Kein Betrieb</option>
+                                {lehrbetriebe.map((b: any) => <option key={b.id_lehrbetrieb} value={b.id_lehrbetrieb}>{b.firma}</option>)}
+                            </select>
+                        </div>
+                        <div><label className="input-label">Beruf</label><input type="text" name="beruf" defaultValue={lehrverhaeltnis?.beruf} className="input-field" /></div>
+                        <div className="grid grid-cols-2 gap-4">
+                            <div><label className="input-label">Lehrbeginn</label><input type="date" name="lehr_start" defaultValue={lehrverhaeltnis?.start?.split('T')[0]} className="input-field" /></div>
+                            <div><label className="input-label">Lehrende</label><input type="date" name="lehr_ende" defaultValue={lehrverhaeltnis?.ende?.split('T')[0]} className="input-field" /></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div className="space-y-6">
+                    <h3 className="text-[11px] font-black text-[var(--primary)] uppercase tracking-[0.2em] flex items-center gap-3">
+                        <span className="h-px w-8 bg-blue-200"></span>Besuchte Kurse & Noten
+                    </h3>
+                    <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-sm">
+                        <table className="w-full text-left">
+                            <thead className="bg-gray-50 text-[10px] font-black uppercase text-gray-400">
+                            <tr><th className="px-6 py-3">Kurs</th><th className="px-6 py-3 w-32 text-center">Note</th></tr>
+                            </thead>
+                            <tbody className="divide-y divide-gray-100">
+                            {kursLinks.map((link: any) => {
+                                const k = allKurse.find((c: any) => c.id_kurs === link.nr_kurs);
+                                return (
+                                    <tr key={link.nr_kurs}>
+                                        <td className="px-6 py-4 font-bold text-sm">{k?.kursthema}</td>
+                                        <td className="px-6 py-4"><input type="text" name={`grade_kurs_${link.nr_kurs}`} defaultValue={link.note} className="input-field !p-2 text-center font-black" /></td>
+                                    </tr>
+                                );
+                            })}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div className="flex justify-between items-center pt-10 border-t border-gray-100">
+                    <button
+                        type="button"
+                        onClick={() => { if(confirm('Person löschen?')) deleteLernende(person.id_lernende); }}
+                        className="text-red-600 font-bold text-sm hover:underline"
+                    >
+                        Person unwiderruflich löschen
                     </button>
+                    <div className="flex gap-4">
+                        <button type="submit" disabled={isPending} className="btn-primary !w-auto px-12">
+                            {isPending ? 'Speichert...' : 'Profil aktualisieren'}
+                        </button>
+                    </div>
                 </div>
             </form>
         </div>
