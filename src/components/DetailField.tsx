@@ -9,7 +9,7 @@ interface DetailFieldProps {
 
 export default function DetailField({ icon, label, value, href }: DetailFieldProps) {
     const content = (
-        <span className="text-gray-800 font-bold block truncate">
+        <span className="text-gray-800 font-bold block break-words">
             {value || "-"}
         </span>
     );

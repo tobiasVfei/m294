@@ -40,7 +40,7 @@ interface Kurs {
 interface KursLernender {
     nr_lernende: number;
     nr_kurs: number;
-    note: string;
+    note: string | null;
 }
 
 interface Country {
@@ -78,7 +78,8 @@ export default async function LernendeDetailsPage({ params }: { params: Promise<
             const courseDetails = (allKurse as Kurs[] || []).find(k => k.id_kurs === link.nr_kurs);
             return {
                 ...link,
-                title: courseDetails?.kursthema || 'Unbekannter Kurs'
+                title: courseDetails?.kursthema || 'Unbekannter Kurs',
+                kursnummer: courseDetails?.kursnummer,
             };
         });
 
@@ -104,7 +105,7 @@ export default async function LernendeDetailsPage({ params }: { params: Promise<
                     <div className="detail-main-content">
                         <DetailSection title="Kontaktinformationen">
                             <DetailField
-                                label="E-Mail (Geschaeftlich)"
+                                label="E-Mail (Geschäftlich)"
                                 value={person.email}
                                 href={`mailto:${person.email}`}
                                 icon={<Icons.Email />}
@@ -151,46 +152,59 @@ export default async function LernendeDetailsPage({ params }: { params: Promise<
                             />
                         </DetailSection>
 
-                        <DetailSection title="Besuchte Kurse">
-                            <div className="grid grid-cols-1 gap-6 w-full">
+                        <section className="w-full">
+                            <h3 className="text-[11px] font-black text-gray-400 uppercase tracking-[0.2em] mb-5 flex items-center gap-3">
+                                <span className="h-px w-8 bg-gray-200"></span>
+                                Besuchte Kurse
+                            </h3>
+                            <div className="flex flex-col gap-3">
                                 {studentCourses.length > 0 ? (
-                                    studentCourses.map((course, index) => (
-                                        <Link
-                                            key={index}
-                                            href={`/kurse/${course.nr_kurs}`}
-                                            className="group w-full p-8 bg-gray-50 rounded-2xl border border-gray-100 hover:border-[var(--primary)] hover:bg-white transition-all duration-300 shadow-sm hover:shadow-md flex justify-between items-center"
-                                        >
-                                            <div className="flex-1 min-w-0 pr-10">
-                                                <h4 className="font-bold text-2xl text-gray-900 group-hover:text-[var(--primary)] transition-colors truncate">
-                                                    {course.title}
-                                                </h4>
-                                                <p className="text-xs text-gray-400 mt-2 uppercase tracking-widest font-bold opacity-60">
-                                                    Kurs-Referenz: #{course.nr_kurs}
-                                                </p>
-                                            </div>
+                                    studentCourses.map((course, index) => {
+                                        const noteNum = parseFloat(course.note ?? '');
+                                        const noteColor = !course.note || isNaN(noteNum)
+                                            ? 'text-gray-300'
+                                            : noteNum >= 4 ? 'text-green-600' : 'text-red-500';
 
-                                            <div className="flex items-center gap-12 shrink-0">
-                                                <div className="text-right px-8 border-l border-gray-200">
-                                                    <p className="text-[10px] text-gray-400 uppercase font-black tracking-tighter mb-1">Erreichte Note</p>
-                                                    <p className={`text-4xl font-black ${Number(course.note) >= 4 ? 'text-green-600' : 'text-red-500'}`}>
-                                                        {course.note || '-'}
+                                        return (
+                                            <Link
+                                                key={index}
+                                                href={`/kurse/${course.nr_kurs}`}
+                                                className="group flex justify-between items-center p-5 bg-gray-50 rounded-2xl border border-gray-100 hover:border-[var(--primary)] hover:bg-white transition-all duration-200 hover:shadow-sm"
+                                            >
+                                                <div className="min-w-0 flex-1">
+                                                    <p className="font-bold text-gray-900 group-hover:text-[var(--primary)] transition-colors truncate">
+                                                        {course.title}
                                                     </p>
+                                                    {course.kursnummer && (
+                                                        <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">
+                                                            {course.kursnummer}
+                                                        </span>
+                                                    )}
                                                 </div>
-                                                <div className="p-3 rounded-full bg-white text-gray-300 group-hover:text-[var(--primary)] group-hover:bg-blue-50 transition-all border border-gray-50 shadow-inner">
-                                                    <Icons.ChevronLeft className="rotate-180" size={24} />
+                                                <div className="flex items-center gap-5 shrink-0 ml-6">
+                                                    <div className="text-right">
+                                                        <p className="text-[9px] text-gray-400 uppercase font-bold tracking-wider mb-0.5">Note</p>
+                                                        <p className={`text-2xl font-black ${noteColor}`}>
+                                                            {course.note || '–'}
+                                                        </p>
+                                                    </div>
+                                                    <Icons.ChevronLeft
+                                                        className="rotate-180 text-gray-300 group-hover:text-[var(--primary)] transition-colors"
+                                                        size={18}
+                                                    />
                                                 </div>
-                                            </div>
-                                        </Link>
-                                    ))
+                                            </Link>
+                                        );
+                                    })
                                 ) : (
                                     <div className="p-10 text-center bg-gray-50 rounded-2xl border-2 border-dashed border-gray-100 text-gray-400 italic">
                                         Noch keine Kursbelegungen vorhanden.
                                     </div>
                                 )}
                             </div>
-                        </DetailSection>
+                        </section>
 
-                        <DetailSection title="Persoenliche Daten">
+                        <DetailSection title="Persönliche Daten">
                             <DetailField
                                 label="Adresse"
                                 value={`${person.strasse}, ${person.plz} ${person.ort}`}

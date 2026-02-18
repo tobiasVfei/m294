@@ -7,6 +7,8 @@ export interface ActionStatus {
     success: boolean | null;
 }
 
+// Helper for simple create operations
+// After the API call, the Next.js cache is invalidated and the user is redirected
 export async function handleCreate(endpoint: string, data: any, redirectUrl: string): Promise<ActionStatus> {
     try {
         await fetchWithAuth(endpoint, {
@@ -21,6 +23,8 @@ export async function handleCreate(endpoint: string, data: any, redirectUrl: str
     return { error: null, success: true };
 }
 
+// Helper for simple update operations
+// The ID is appended directly to the endpoint (e.g. /dozenten/5)
 export async function handleUpdate(endpoint: string, id: string | number, data: any, redirectUrl: string): Promise<ActionStatus> {
     try {
         await fetchWithAuth(`${endpoint}/${id}`, {
@@ -35,6 +39,7 @@ export async function handleUpdate(endpoint: string, id: string | number, data: 
     return { error: null, success: true };
 }
 
+// Helper for delete operations
 export async function handleDelete(endpoint: string, id: number, redirectUrl: string) {
     try {
         await fetchWithAuth(`${endpoint}/${id}`, {

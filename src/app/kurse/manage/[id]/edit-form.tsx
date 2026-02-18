@@ -1,13 +1,14 @@
 'use client';
 
 import { useActionState } from 'react';
-import { updateKurs, deleteKurs, ActionState } from '../../actions';
+import { updateKurs, deleteKurs, removeStudentFromKurs, ActionState } from '../../actions';
 import Link from 'next/link';
 import { Icons } from '@/lib/icons';
 
 export default function EditKursForm({ kurs, allLernende, belegungen, allDozenten }: any) {
     const initialState: ActionState = { error: null, success: null };
     const [state, formAction, isPending] = useActionState(updateKurs, initialState);
+    const [, removeAction] = useActionState(removeStudentFromKurs, initialState);
 
     return (
         <div className="card !max-w-5xl">
@@ -100,7 +101,13 @@ export default function EditKursForm({ kurs, allLernende, belegungen, allDozente
                                             />
                                         </td>
                                         <td className="px-6 py-4 text-center">
-                                            <button type="button" className="text-gray-300 hover:text-red-500 transition-colors">
+                                            {/* Button references external form by ID to avoid nested <form> */}
+                                            <button
+                                                type="submit"
+                                                form={`remove-student-${linkId}`}
+                                                onClick={(e) => { if (!confirm('Student aus Kurs entfernen?')) e.preventDefault(); }}
+                                                className="text-gray-300 hover:text-red-500 transition-colors"
+                                            >
                                                 <Icons.Trash size={16} />
                                             </button>
                                         </td>
@@ -139,6 +146,17 @@ export default function EditKursForm({ kurs, allLernende, belegungen, allDozente
                     </button>
                 </div>
             </form>
+
+            {/* Delete forms outside main form — buttons above reference these by ID */}
+            {belegungen.map((bel: any) => {
+                const linkId = bel.id_kurse_lernende || bel.id;
+                return (
+                    <form key={linkId} id={`remove-student-${linkId}`} action={removeAction}>
+                        <input type="hidden" name="link_id" value={linkId} />
+                        <input type="hidden" name="kurs_id" value={kurs.id_kurs} />
+                    </form>
+                );
+            })}
         </div>
     );
 }

@@ -3,6 +3,9 @@ import FilterBar from '@/components/FilterBar';
 import PageHeader from '@/components/PageHeader';
 import DataGrid from '@/components/DataGrid';
 import Link from 'next/link';
+import { Icons } from '@/lib/icons';
+
+const formatDate = (d: string) => d ? new Date(d).toLocaleDateString('de-CH') : '-';
 
 interface Kurs {
     id_kurs: number;
@@ -119,17 +122,17 @@ export default async function Page({
                                 {kurs.inhalt || "Kein Inhalt hinterlegt."}
                             </p>
                             <div className="mt-4 flex gap-2 text-[10px] text-gray-400">
-                                <span>Start: {kurs.startdatum}</span>
-                                <span>•</span>
-                                <span>Ende: {kurs.enddatum}</span>
+                                <span>{formatDate(kurs.startdatum)}</span>
+                                <span>–</span>
+                                <span>{formatDate(kurs.enddatum)}</span>
                             </div>
                         </div>
                         <div className="flex justify-between items-center mt-6 pt-4 border-t border-gray-100">
                             <Link href={`/kurse/${kurs.id_kurs}`} className="text-[var(--primary)] text-sm font-bold hover:underline">
                                 Details anzeigen
                             </Link>
-                            <Link href={`/kurse/manage/${kurs.id_kurs}`} className="text-gray-400 hover:text-gray-700 transition-colors">
-                                ✏️
+                            <Link href={`/kurse/manage/${kurs.id_kurs}`} className="text-gray-400 hover:text-gray-700 transition-colors p-1">
+                                <Icons.Edit size={16} />
                             </Link>
                         </div>
                     </div>

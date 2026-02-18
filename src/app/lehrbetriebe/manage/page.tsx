@@ -23,13 +23,13 @@ export default function CreateLehrbetriebPage() {
 
                     <div>
                         <label className="input-label">Strasse</label>
-                        <input type="text" name="strasse" className="input-field" />
+                        <input type="text" name="strasse" required className="input-field" />
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <label className="input-label">PLZ</label>
-                            <input type="text" name="plz" className="input-field" />
+                            <input type="text" name="plz" required className="input-field" />
                         </div>
                         <div>
                             <label className="input-label">Ort</label>

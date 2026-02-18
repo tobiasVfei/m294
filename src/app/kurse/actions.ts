@@ -52,6 +52,7 @@ export async function updateKurs(prevState: ActionState, formData: FormData): Pr
             body: JSON.stringify(kursData),
         });
 
+        // Update grades for all enrolled students — field names follow "grade_link_id_{id_kurse_lernende}"
         const entries = Array.from(formData.entries());
 
         for (const [key, value] of entries) {
@@ -98,6 +99,23 @@ export async function updateKurs(prevState: ActionState, formData: FormData): Pr
     }
 
     redirect(`/kurse/${id}`);
+}
+
+export async function removeStudentFromKurs(prevState: ActionState, formData: FormData): Promise<ActionState> {
+    const linkId = formData.get('link_id') as string;
+    const kursId = formData.get('kurs_id') as string;
+
+    try {
+        await fetchWithAuth(`/kurse_lernende/${linkId}`, {
+            method: 'DELETE',
+        });
+        revalidatePath(`/kurse/${kursId}`);
+        revalidatePath('/kurse');
+    } catch (e: any) {
+        return { error: e.message, success: null };
+    }
+
+    redirect(`/kurse/${kursId}/manage`);
 }
 
 export async function deleteKurs(id: string | number) {

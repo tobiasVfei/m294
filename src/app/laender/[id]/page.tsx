@@ -9,10 +9,9 @@ export const dynamic = 'force-dynamic';
 export default async function LandDetailsPage({ params }: { params: Promise<{ id: string }> }) {
     const { id } = await params;
 
-    const [land, allLernende, allLehrbetriebe, allDozenten] = await Promise.all([
+    const [land, allLernende, allDozenten] = await Promise.all([
         fetchWithAuth(`/laender/${id}`),
         fetchWithAuth('/lernende'),
-        fetchWithAuth('/lehrbetriebe'),
         fetchWithAuth('/dozenten')
     ]);
 
@@ -21,11 +20,6 @@ export default async function LandDetailsPage({ params }: { params: Promise<{ id
             label: 'Lernende',
             count: (allLernende || []).filter((l: any) => String(l.nr_land) === id).length,
             href: `/lernende?nr_land=${id}&origin=laender`
-        },
-        {
-            label: 'Lehrbetriebe',
-            count: (allLehrbetriebe || []).filter((b: any) => String(b.nr_land) === id).length,
-            href: `/lehrbetriebe?nr_land=${id}&origin=laender`
         },
         {
             label: 'Dozenten',

@@ -17,18 +17,24 @@ interface FilterBarProps {
     }[];
 }
 
+// Client component for search and filter functionality
+// All filters are stored as URL parameters so links stay shareable
 export default function FilterBar({ searchPlaceholder = 'Suchen...', filterOptions = [] }: FilterBarProps) {
     const router = useRouter();
     const pathname = usePathname();
     const searchParams = useSearchParams();
     const [isPending, startTransition] = useTransition();
 
+    // Search term is kept in local state so the user can type without triggering a request on every keystroke
     const [searchTerm, setSearchTerm] = useState(searchParams.get('q') || '');
 
+    // If the URL changes externally (e.g. reset), sync the search input
     useEffect(() => {
         setSearchTerm(searchParams.get('q') || '');
     }, [searchParams]);
 
+    // Debounce: only update the URL 400ms after the user stopped typing
+    // This avoids sending a new request on every single keystroke
     useEffect(() => {
         const delayDebounceFn = setTimeout(() => {
             const currentQ = searchParams.get('q') || '';
@@ -40,6 +46,8 @@ export default function FilterBar({ searchPlaceholder = 'Suchen...', filterOptio
         return () => clearTimeout(delayDebounceFn);
     }, [searchTerm]);
 
+    // Update a single URL parameter without reloading the page
+    // The "origin" parameter is preserved so the back button still works
     const updateURL = (key: string, value: string) => {
         const params = new URLSearchParams(searchParams.toString());
 
@@ -59,6 +67,7 @@ export default function FilterBar({ searchPlaceholder = 'Suchen...', filterOptio
         });
     };
 
+    // Clear all active filters but keep the "origin" parameter
     const resetFilters = () => {
         setSearchTerm('');
         const params = new URLSearchParams(searchParams.toString());
@@ -76,6 +85,7 @@ export default function FilterBar({ searchPlaceholder = 'Suchen...', filterOptio
         });
     };
 
+    // Count active filters — "origin" is excluded since it is not a real filter
     const activeFiltersCount = Array.from(searchParams.keys()).filter(k => k !== 'origin').length;
 
     return (
@@ -90,11 +100,13 @@ export default function FilterBar({ searchPlaceholder = 'Suchen...', filterOptio
                         onChange={(e) => setSearchTerm(e.target.value)}
                         className="input-field"
                     />
+                    {/* Loading spinner while the new page is being fetched */}
                     {isPending && (
                         <div className="absolute right-3 bottom-3 animate-spin h-4 w-4 border-2 border-[var(--primary)] border-t-transparent rounded-full" />
                     )}
                 </div>
 
+                {/* Render dropdown filters dynamically — each page passes different options */}
                 {filterOptions.map((filter) => (
                     <div key={filter.key} className="md:col-span-3">
                         <label className="input-label">{filter.label}</label>
@@ -113,6 +125,7 @@ export default function FilterBar({ searchPlaceholder = 'Suchen...', filterOptio
                     </div>
                 ))}
 
+                {/* Show reset button only when at least one filter is active */}
                 <div className="md:col-span-1 flex justify-end">
                     {activeFiltersCount > 0 && (
                         <button

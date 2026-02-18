@@ -8,7 +8,7 @@ export default function EditLandForm({ land }: { land: any }) {
     const initialState: ActionState = { error: null, success: null };
     const [state, formAction, isPending] = useActionState(updateLand, initialState);
 
-    const deleteWithId = deleteLand.bind(null, land.id_land);
+    const deleteWithId = deleteLand.bind(null, land.id_country);
 
     return (
         <div className="card max-w-md">
@@ -20,7 +20,7 @@ export default function EditLandForm({ land }: { land: any }) {
                         type="submit"
                         className="text-red-600 hover:text-red-800 text-sm border border-red-200 bg-red-50 px-3 py-1 rounded cursor-pointer"
                         onClick={(e) => {
-                            if (!confirm(`Möchtest du ${land.landname} wirklich löschen?`)) {
+                            if (!confirm(`Möchtest du ${land.country} wirklich löschen?`)) {
                                 e.preventDefault();
                             }
                         }}
@@ -33,14 +33,14 @@ export default function EditLandForm({ land }: { land: any }) {
             {state?.error && <div className="error-box mb-4">{state.error}</div>}
 
             <form action={formAction} className="space-y-4">
-                <input type="hidden" name="id_land" value={land.id_land} />
+                <input type="hidden" name="id_land" value={land.id_country} />
 
                 <div>
                     <label className="input-label">Offizieller Name</label>
                     <input
                         type="text"
-                        name="landname"
-                        defaultValue={land.landname}
+                        name="country"
+                        defaultValue={land.country}
                         required
                         className="input-field"
                         placeholder="z.B. Schweiz"
