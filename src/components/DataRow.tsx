@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { Icons } from '@/lib/icons';
 
 interface DataRowProps {
     id: number;
@@ -50,7 +51,7 @@ export default function DataRow({ id, title, subtitle, details, info, viewHref, 
                         onClick={(e) => e.stopPropagation()}
                         className="p-2 hover:bg-gray-100 rounded-lg transition-colors text-gray-400 hover:text-gray-900"
                     >
-                        ✏️
+                        <Icons.Edit size={16} />
                     </Link>
                 </div>
             </td>

@@ -3,6 +3,7 @@ import FilterBar from '@/components/FilterBar';
 import PageHeader from '@/components/PageHeader';
 import DataGrid from '@/components/DataGrid';
 import Link from 'next/link';
+import { Icons } from '@/lib/icons';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
@@ -64,9 +65,9 @@ export default async function Page({ searchParams }: { searchParams: Promise<any
                             </Link>
                             <Link
                                 href={`/laender/manage/${land.id_country}`}
-                                className="text-gray-400 hover:text-gray-700 transition-colors"
+                                className="text-gray-400 hover:text-gray-700 transition-colors p-1"
                             >
-                                ✏️
+                                <Icons.Edit size={16} />
                             </Link>
                         </div>
                     </div>

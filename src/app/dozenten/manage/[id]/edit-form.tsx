@@ -3,6 +3,8 @@
 import { useActionState } from 'react';
 import { updateDozent, deleteDozent, ActionState } from '../../actions';
 import Link from 'next/link';
+import { Icons } from '@/lib/icons';
+import FormSection from '@/components/FormSection';
 
 interface EditDozentFormProps {
     dozent: any;
@@ -23,7 +25,7 @@ export default function EditDozentForm({ dozent, laender }: EditDozentFormProps)
                         className="text-red-600 hover:bg-red-50 px-4 py-2 rounded-xl border border-red-100 font-bold text-xs uppercase"
                         onClick={(e) => { if (!confirm('Wirklich löschen?')) e.preventDefault(); }}
                     >
-                        🗑️ Löschen
+                        <Icons.Trash size={14} className="inline mr-1" /> Löschen
                     </button>
                 </form>
             </div>
@@ -33,10 +35,7 @@ export default function EditDozentForm({ dozent, laender }: EditDozentFormProps)
             <form action={formAction} className="space-y-8">
                 <input type="hidden" name="id_dozent" value={dozent.id_dozent} />
 
-                <section className="space-y-4">
-                    <h3 className="text-[11px] font-black text-gray-400 uppercase tracking-widest flex items-center gap-2">
-                        <span className="h-px w-4 bg-gray-200"></span> Person & Kontakt
-                    </h3>
+                <FormSection title="Person & Kontakt">
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                         <div>
                             <label className="input-label">Vorname</label>
@@ -62,12 +61,9 @@ export default function EditDozentForm({ dozent, laender }: EditDozentFormProps)
                             <input type="date" name="birthdate" defaultValue={dozent.birthdate?.split('T')[0]} className="input-field" />
                         </div>
                     </div>
-                </section>
+                </FormSection>
 
-                <section className="space-y-4">
-                    <h3 className="text-[11px] font-black text-gray-400 uppercase tracking-widest flex items-center gap-2">
-                        <span className="h-px w-4 bg-gray-200"></span> Adresse & Telefon
-                    </h3>
+                <FormSection title="Adresse & Telefon">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div className="md:col-span-2">
                             <label className="input-label">Strasse</label>
@@ -100,7 +96,7 @@ export default function EditDozentForm({ dozent, laender }: EditDozentFormProps)
                             <input type="text" name="telefon" defaultValue={dozent.telefon} className="input-field" />
                         </div>
                     </div>
-                </section>
+                </FormSection>
 
                 <div className="flex justify-end gap-4 pt-6 border-t">
                     <Link href={`/dozenten/${dozent.id_dozent}`} className="px-6 py-3 font-bold text-gray-400 hover:text-gray-600 transition-colors">Abbrechen</Link>

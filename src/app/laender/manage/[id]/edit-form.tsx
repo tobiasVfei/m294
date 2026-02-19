@@ -3,6 +3,7 @@
 import { useActionState } from 'react';
 import { updateLand, deleteLand, ActionState } from '../../actions';
 import Link from 'next/link';
+import { Icons } from '@/lib/icons';
 
 export default function EditLandForm({ land }: { land: any }) {
     const initialState: ActionState = { error: null, success: null };
@@ -25,7 +26,7 @@ export default function EditLandForm({ land }: { land: any }) {
                             }
                         }}
                     >
-                        🗑️
+                        <Icons.Trash size={14} />
                     </button>
                 </form>
             </div>

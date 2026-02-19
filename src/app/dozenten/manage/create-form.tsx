@@ -3,6 +3,7 @@
 import { useActionState } from 'react';
 import { ActionState, createDozent } from '../actions';
 import Link from 'next/link';
+import FormSection from '@/components/FormSection';
 
 export default function CreateDozentForm({ laender }: { laender: any[] }) {
     const [state, formAction, isPending] = useActionState(createDozent, { error: null, success: null });
@@ -22,11 +23,7 @@ export default function CreateDozentForm({ laender }: { laender: any[] }) {
 
             <form action={formAction} className="space-y-12">
 
-                {/* Persönliche Daten */}
-                <div className="space-y-6">
-                    <h3 className="text-[11px] font-black text-[var(--primary)] uppercase tracking-[0.2em] flex items-center gap-3">
-                        <span className="h-px w-8 bg-blue-200"></span>Persönliche Daten
-                    </h3>
+                <FormSection title="Persönliche Daten">
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                         <div>
                             <label className="input-label">Vorname</label>
@@ -52,13 +49,9 @@ export default function CreateDozentForm({ laender }: { laender: any[] }) {
                             <input type="date" name="birthdate" className="input-field" />
                         </div>
                     </div>
-                </div>
+                </FormSection>
 
-                {/* Kontakt & Adresse */}
-                <div className="space-y-6">
-                    <h3 className="text-[11px] font-black text-[var(--primary)] uppercase tracking-[0.2em] flex items-center gap-3">
-                        <span className="h-px w-8 bg-blue-200"></span>Kontakt & Adresse
-                    </h3>
+                <FormSection title="Kontakt & Adresse">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div className="md:col-span-2">
                             <label className="input-label">Strasse</label>
@@ -92,7 +85,7 @@ export default function CreateDozentForm({ laender }: { laender: any[] }) {
                             <input name="handy" className="input-field" />
                         </div>
                     </div>
-                </div>
+                </FormSection>
 
                 <div className="flex justify-end gap-4 pt-10 border-t border-gray-100">
                     <Link href="/dozenten" className="px-8 py-3 font-bold text-gray-400">Abbrechen</Link>

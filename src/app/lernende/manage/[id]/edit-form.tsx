@@ -4,6 +4,7 @@ import { useActionState } from 'react';
 import { updateLernende, deleteLernende, removeKursEnrollment, addKursToLernende, ActionState } from '../../actions';
 import Link from 'next/link';
 import { Icons } from '@/lib/icons';
+import FormSection from '@/components/FormSection';
 
 export default function EditLernendeForm({ person, allKurse, kursLinks, laender, lehrbetriebe, lehrverhaeltnis }: any) {
     const initialState: ActionState = { error: null, success: null };
@@ -40,10 +41,7 @@ export default function EditLernendeForm({ person, allKurse, kursLinks, laender,
             <form action={formAction} className="space-y-12">
                 <input type="hidden" name="id_lernende" value={person.id_lernende} />
 
-                <div className="space-y-6">
-                    <h3 className="text-[11px] font-black text-[var(--primary)] uppercase tracking-[0.2em] flex items-center gap-3">
-                        <span className="h-px w-8 bg-blue-200"></span>Persönliche Daten
-                    </h3>
+                <FormSection title="Persönliche Daten">
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         <div><label className="input-label">Vorname</label><input type="text" name="vorname" defaultValue={person.vorname} className="input-field" /></div>
                         <div><label className="input-label">Nachname</label><input type="text" name="nachname" defaultValue={person.nachname} className="input-field" /></div>
@@ -62,12 +60,9 @@ export default function EditLernendeForm({ person, allKurse, kursLinks, laender,
                             </select>
                         </div>
                     </div>
-                </div>
+                </FormSection>
 
-                <div className="space-y-6">
-                    <h3 className="text-[11px] font-black text-[var(--primary)] uppercase tracking-[0.2em] flex items-center gap-3">
-                        <span className="h-px w-8 bg-blue-200"></span>Kontakt & Adresse
-                    </h3>
+                <FormSection title="Kontakt & Adresse">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div><label className="input-label">E-Mail (Geschäftlich)</label><input type="email" name="email" defaultValue={person.email} className="input-field" /></div>
                         <div><label className="input-label">E-Mail (Privat)</label><input type="email" name="email_privat" defaultValue={person.email_privat} className="input-field" /></div>
@@ -79,12 +74,9 @@ export default function EditLernendeForm({ person, allKurse, kursLinks, laender,
                         <div><label className="input-label">Telefon</label><input type="text" name="telefon" defaultValue={person.telefon} className="input-field" /></div>
                         <div><label className="input-label">Handy</label><input type="text" name="handy" defaultValue={person.handy} className="input-field" /></div>
                     </div>
-                </div>
+                </FormSection>
 
-                <div className="space-y-6">
-                    <h3 className="text-[11px] font-black text-[var(--primary)] uppercase tracking-[0.2em] flex items-center gap-3">
-                        <span className="h-px w-8 bg-blue-200"></span>Ausbildung
-                    </h3>
+                <FormSection title="Ausbildung">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-6 bg-gray-50 rounded-2xl border border-gray-100">
                         <input type="hidden" name="id_lehrbetrieb_lernende" value={lehrverhaeltnis?.id_lehrbetrieb_lernende ?? ''} />
                         <div className="md:col-span-2">
@@ -100,12 +92,9 @@ export default function EditLernendeForm({ person, allKurse, kursLinks, laender,
                             <div><label className="input-label">Lehrende</label><input type="date" name="lehr_ende" defaultValue={lehrverhaeltnis?.ende?.split('T')[0]} className="input-field" /></div>
                         </div>
                     </div>
-                </div>
+                </FormSection>
 
-                <div className="space-y-6">
-                    <h3 className="text-[11px] font-black text-[var(--primary)] uppercase tracking-[0.2em] flex items-center gap-3">
-                        <span className="h-px w-8 bg-blue-200"></span>Besuchte Kurse & Noten
-                    </h3>
+                <FormSection title="Besuchte Kurse & Noten">
                     <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-sm">
                         <table className="w-full text-left">
                             <thead className="bg-gray-50 text-[10px] font-black uppercase text-gray-400">
@@ -165,15 +154,15 @@ export default function EditLernendeForm({ person, allKurse, kursLinks, laender,
                             <button type="submit" form="add-kurs-form" className="btn-primary !w-auto px-8">Einschreiben</button>
                         </div>
                     )}
-                </div>
+                </FormSection>
 
                 <div className="flex justify-between items-center pt-10 border-t border-gray-100">
                     <button
                         type="button"
                         onClick={() => { if(confirm('Person löschen?')) deleteLernende(person.id_lernende); }}
-                        className="text-red-600 font-bold text-sm hover:underline"
+                        className="text-red-600 hover:bg-red-50 px-4 py-2 rounded-xl border border-red-100 font-bold text-xs uppercase flex items-center gap-2"
                     >
-                        Person unwiderruflich löschen
+                        <Icons.Trash size={14} /> Löschen
                     </button>
                     <div className="flex gap-4">
                         <button type="submit" disabled={isPending} className="btn-primary !w-auto px-12">
