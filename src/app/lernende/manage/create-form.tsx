@@ -3,6 +3,7 @@
 import { useActionState } from 'react';
 import { createLernende, ActionState } from '../actions';
 import Link from 'next/link';
+import FormSection from '@/components/FormSection';
 
 export default function CreateLernendeForm({ laender, lehrbetriebe }: { laender: any[]; lehrbetriebe: any[] }) {
     const initialState: ActionState = { error: null, success: null };
@@ -23,11 +24,7 @@ export default function CreateLernendeForm({ laender, lehrbetriebe }: { laender:
 
             <form action={formAction} className="space-y-12">
 
-                {/* Persönliche Daten */}
-                <div className="space-y-6">
-                    <h3 className="text-[11px] font-black text-[var(--primary)] uppercase tracking-[0.2em] flex items-center gap-3">
-                        <span className="h-px w-8 bg-blue-200"></span>Persönliche Daten
-                    </h3>
+                <FormSection title="Persönliche Daten">
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         <div>
                             <label className="input-label">Vorname</label>
@@ -58,13 +55,9 @@ export default function CreateLernendeForm({ laender, lehrbetriebe }: { laender:
                             </select>
                         </div>
                     </div>
-                </div>
+                </FormSection>
 
-                {/* Kontakt & Adresse */}
-                <div className="space-y-6">
-                    <h3 className="text-[11px] font-black text-[var(--primary)] uppercase tracking-[0.2em] flex items-center gap-3">
-                        <span className="h-px w-8 bg-blue-200"></span>Kontakt & Adresse
-                    </h3>
+                <FormSection title="Kontakt & Adresse">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
                             <label className="input-label">E-Mail (Geschäftlich)</label>
@@ -97,13 +90,9 @@ export default function CreateLernendeForm({ laender, lehrbetriebe }: { laender:
                             <input type="text" name="handy" className="input-field" />
                         </div>
                     </div>
-                </div>
+                </FormSection>
 
-                {/* Ausbildung (optional) */}
-                <div className="space-y-6">
-                    <h3 className="text-[11px] font-black text-[var(--primary)] uppercase tracking-[0.2em] flex items-center gap-3">
-                        <span className="h-px w-8 bg-blue-200"></span>Ausbildung <span className="text-gray-300 font-normal normal-case tracking-normal text-xs">(optional)</span>
-                    </h3>
+                <FormSection title="Ausbildung (optional)">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-6 bg-gray-50 rounded-2xl border border-gray-100">
                         <div className="md:col-span-2">
                             <label className="input-label">Lehrbetrieb</label>
@@ -129,7 +118,7 @@ export default function CreateLernendeForm({ laender, lehrbetriebe }: { laender:
                             </div>
                         </div>
                     </div>
-                </div>
+                </FormSection>
 
                 <div className="flex justify-end gap-4 pt-10 border-t border-gray-100">
                     <Link href="/lernende" className="px-8 py-3 font-bold text-gray-400">Abbrechen</Link>

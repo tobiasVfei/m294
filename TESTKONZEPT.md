@@ -2,7 +2,7 @@
 
 **Modul:** 294 – Webapplikation realisieren
 **Projekt:** VFei Kursverwaltung
-**Datum:** 2026-02-18
+**Datum:** 2026-02-19
 
 ---
 
@@ -49,17 +49,18 @@ Dieses Testkonzept beschreibt, wie die Kursverwaltungsapplikation manuell getest
 | L-01 | Lernenden-Übersicht aufrufen | Tabelle mit allen Lernenden sichtbar |
 | L-02 | Suche nach Name | Tabelle filtert auf passende Einträge |
 | L-03 | Filter nach Land | Nur Lernende aus diesem Land werden angezeigt |
-| L-04 | Neuen Lernenden erstellen (ohne Lehrbetrieb) | Lernende/r erscheint in der Übersicht |
-| L-05 | Neuen Lernenden erstellen (mit Lehrbetrieb) | Lernende/r + Lehrbetrieb-Beziehung gespeichert |
-| L-06 | Lernenden-Detailseite öffnen | Alle Felder, Kurse und Lehrbetrieb korrekt angezeigt |
-| L-07 | Lernenden bearbeiten – Grunddaten ändern | Änderungen gespeichert |
-| L-08 | Lehrbetrieb beim Lernenden zuweisen | Beziehung neu erstellt (POST) |
-| L-09 | Lehrbetrieb beim Lernenden wechseln | Bestehende Beziehung aktualisiert (PUT) |
-| L-10 | Lehrbetrieb auf "Kein Betrieb" setzen | Beziehung gelöscht (DELETE) |
-| L-11 | Note eines belegten Kurses ändern | Neue Note in der Datenbank gespeichert |
-| L-12 | Kurs aus Profil entfernen (Trash-Button) | Bestätigungsdialog erscheint, bei OK: Kurs entfernt |
-| L-13 | Kurs einschreiben über Dropdown | Kurs erscheint in der Kursliste des Lernenden |
-| L-14 | Lernenden löschen | Nicht mehr in der Übersicht |
+| L-04 | Filter nach Lehrbetrieb | Nur Lernende dieses Betriebs werden angezeigt |
+| L-05 | Neuen Lernenden erstellen (ohne Lehrbetrieb) | Lernende/r erscheint in der Übersicht |
+| L-06 | Neuen Lernenden erstellen (mit Lehrbetrieb) | Lernende/r + Lehrbetrieb-Beziehung gespeichert |
+| L-07 | Lernenden-Detailseite öffnen | Alle Felder, Kurse und Lehrbetrieb korrekt angezeigt |
+| L-08 | Lernenden bearbeiten – Grunddaten ändern | Änderungen gespeichert |
+| L-09 | Lehrbetrieb beim Lernenden zuweisen | Beziehung neu erstellt (POST) |
+| L-10 | Lehrbetrieb beim Lernenden wechseln | Bestehende Beziehung aktualisiert (PUT) |
+| L-11 | Lehrbetrieb auf "Kein Betrieb" setzen | Beziehung gelöscht (DELETE) |
+| L-12 | Note eines belegten Kurses ändern | Neue Note in der Datenbank gespeichert |
+| L-13 | Kurs aus Profil entfernen (Trash-Button) | Bestätigungsdialog erscheint, bei OK: Kurs entfernt |
+| L-14 | Kurs einschreiben über Dropdown | Kurs erscheint in der Kursliste des Lernenden |
+| L-15 | Lernenden löschen | Nicht mehr in der Übersicht |
 
 ---
 
@@ -67,8 +68,8 @@ Dieses Testkonzept beschreibt, wie die Kursverwaltungsapplikation manuell getest
 
 | ID | Beschreibung | Erwartetes Ergebnis |
 |---|---|---|
-| K-01 | Kurs-Übersicht aufrufen | Tabelle mit allen Kursen |
-| K-02 | Suche nach Kursthema | Tabelle filtert korrekt |
+| K-01 | Kurs-Übersicht aufrufen | Karten mit allen Kursen |
+| K-02 | Suche nach Kursthema | Liste filtert korrekt |
 | K-03 | Filter nach Dozent | Nur Kurse dieses Dozenten angezeigt |
 | K-04 | Neuen Kurs erstellen | Kurs erscheint in der Übersicht |
 | K-05 | Kurs-Detailseite aufrufen | Alle Details + eingeschriebene Lernende sichtbar |
@@ -85,10 +86,11 @@ Dieses Testkonzept beschreibt, wie die Kursverwaltungsapplikation manuell getest
 | ID | Beschreibung | Erwartetes Ergebnis |
 |---|---|---|
 | D-01 | Dozenten-Übersicht aufrufen | Tabelle mit allen Dozenten |
-| D-02 | Neuen Dozenten erstellen | Dozent erscheint in der Übersicht |
-| D-03 | Dozenten-Detailseite aufrufen | Alle Felder + geleitete Kurse sichtbar |
-| D-04 | Dozenten bearbeiten | Alle Felder werden korrekt gespeichert |
-| D-05 | Dozenten löschen | Nicht mehr in der Übersicht |
+| D-02 | Filter nach Geschlecht | Nur Dozenten des gewählten Geschlechts angezeigt |
+| D-03 | Neuen Dozenten erstellen | Dozent erscheint in der Übersicht |
+| D-04 | Dozenten-Detailseite aufrufen | Alle Felder + geleitete Kurse sichtbar |
+| D-05 | Dozenten bearbeiten | Alle Felder werden korrekt gespeichert |
+| D-06 | Dozenten löschen | Nicht mehr in der Übersicht |
 
 ---
 
@@ -100,8 +102,10 @@ Dieses Testkonzept beschreibt, wie die Kursverwaltungsapplikation manuell getest
 | B-02 | Suche nach Firmaname | Tabelle filtert korrekt |
 | B-03 | Neuen Lehrbetrieb erstellen | Betrieb erscheint in der Übersicht |
 | B-04 | Lehrbetrieb-Detailseite aufrufen | Adresse + Lernende im Betrieb angezeigt |
-| B-05 | Lehrbetrieb bearbeiten | Änderungen gespeichert |
-| B-06 | Lehrbetrieb löschen | Nicht mehr in der Übersicht |
+| B-05 | Lehrbetrieb bearbeiten – Stammdaten | Änderungen gespeichert |
+| B-06 | Lernenden über Edit-Form dem Betrieb zuweisen | Person erscheint in der Lernenden-Tabelle |
+| B-07 | Lernenden aus Betrieb entfernen (Trash-Button) | Bestätigungsdialog, bei OK: Person entfernt |
+| B-08 | Lehrbetrieb löschen | Nicht mehr in der Übersicht |
 
 ---
 
@@ -110,7 +114,7 @@ Dieses Testkonzept beschreibt, wie die Kursverwaltungsapplikation manuell getest
 | ID | Beschreibung | Erwartetes Ergebnis |
 |---|---|---|
 | La-01 | Länder-Übersicht aufrufen | Alle Länder sichtbar |
-| La-02 | Neues Land erstellen | Land erscheint in der Übersicht |
+| La-02 | Neues Land erstellen | Land erscheint in der Übersicht und in Dropdowns |
 | La-03 | Land-Detailseite aufrufen | Statistiken (Lernende, Dozenten) korrekt |
 | La-04 | Land bearbeiten | Name korrekt gespeichert |
 | La-05 | Land löschen | Nicht mehr in der Übersicht |
@@ -123,9 +127,11 @@ Dieses Testkonzept beschreibt, wie die Kursverwaltungsapplikation manuell getest
 |---|---|---|
 | N-01 | Link `/lernende/3` direkt aufrufen | Detailseite von Lernende/r Nr. 3 |
 | N-02 | Link `/kurse/5` direkt aufrufen | Detailseite von Kurs Nr. 5 |
-| N-03 | Gefilterter Link (z.B. `/lernende?nr_land=1`) | Filter aktiv, Daten gefiltert |
-| N-04 | "Zurück"-Button auf Detailseiten | Navigiert zur Übersicht |
-| N-05 | Filter zurücksetzen | Alle Filter gelöscht, alle Einträge sichtbar |
+| N-03 | Link `/lernende/manage/3` direkt aufrufen | Edit-Formular von Lernende/r Nr. 3 |
+| N-04 | Link `/kurse/manage/5` direkt aufrufen | Edit-Formular von Kurs Nr. 5 |
+| N-05 | Gefilterter Link (z.B. `/lernende?nr_land=1`) | Filter aktiv, Daten gefiltert |
+| N-06 | "Zurück"-Button auf Detailseiten | Navigiert zur Übersicht |
+| N-07 | Filter zurücksetzen | Alle Filter gelöscht, alle Einträge sichtbar |
 
 ---
 
@@ -151,6 +157,7 @@ Dieses Testkonzept beschreibt, wie die Kursverwaltungsapplikation manuell getest
 | L-12 | ✅ OK | |
 | L-13 | ✅ OK | |
 | L-14 | ✅ OK | |
+| L-15 | ✅ OK | |
 | K-01 | ✅ OK | |
 | K-02 | ✅ OK | |
 | K-03 | ✅ OK | |
@@ -166,12 +173,15 @@ Dieses Testkonzept beschreibt, wie die Kursverwaltungsapplikation manuell getest
 | D-03 | ✅ OK | |
 | D-04 | ✅ OK | |
 | D-05 | ✅ OK | |
+| D-06 | ✅ OK | |
 | B-01 | ✅ OK | |
 | B-02 | ✅ OK | |
 | B-03 | ✅ OK | |
 | B-04 | ✅ OK | |
 | B-05 | ✅ OK | |
 | B-06 | ✅ OK | |
+| B-07 | ✅ OK | |
+| B-08 | ✅ OK | |
 | La-01 | ✅ OK | |
 | La-02 | ✅ OK | |
 | La-03 | ✅ OK | |
@@ -182,6 +192,8 @@ Dieses Testkonzept beschreibt, wie die Kursverwaltungsapplikation manuell getest
 | N-03 | ✅ OK | |
 | N-04 | ✅ OK | |
 | N-05 | ✅ OK | |
+| N-06 | ✅ OK | |
+| N-07 | ✅ OK | |
 
 ---
 
@@ -190,8 +202,8 @@ Dieses Testkonzept beschreibt, wie die Kursverwaltungsapplikation manuell getest
 Alle definierten Testfälle wurden erfolgreich durchgeführt. Die Applikation erfüllt die Anforderungen des Moduls 294:
 
 - Vollständiges CRUD für alle Ressourcen (Lernende, Kurse, Dozenten, Lehrbetriebe, Länder)
-- Permanente, direkt aufrufbare URLs für alle Detailseiten
-- Beziehungsverwaltung (Kurse ↔ Lernende, Lehrbetrieb ↔ Lernende)
+- Permanente, direkt aufrufbare URLs für alle Detailseiten und Edit-Formulare
+- Beziehungsverwaltung (Kurse ↔ Lernende mit Noten, Lehrbetrieb ↔ Lernende mit Beruf und Daten)
 - Filterung und Suche auf den Übersichtsseiten
 - Authentifizierung mit JWT-Token
 - Quellcode-Kommentare an den wichtigen/komplexen Stellen

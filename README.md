@@ -1,36 +1,166 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# VFei Kursverwaltung
 
-## Getting Started
+Modul 294 – Frontend einer interaktiven Webapplikation
+Schule: VFei Bildungszentrum
 
-First, run the development server:
+---
+
+## Technologie-Stack
+
+| Technologie | Version |
+|---|---|
+| Next.js (App Router) | 16 |
+| React | 19 |
+| TypeScript | 5 |
+| Tailwind CSS | 4 |
+
+---
+
+## Installation & Start
+
+**Voraussetzungen:**
+- XAMPP läuft (Apache + MySQL)
+- Die REST-API ist erreichbar unter `http://localhost/api/src/`
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+npm run dev      # Entwicklungsserver auf http://localhost:3000
+npm run build    # Produktions-Build
+npm run start    # Produktionsserver starten
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Authentifizierung
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Alle Seiten ausser `/login` und `/register` sind durch Middleware geschützt. Der Login speichert einen JWT-Token als httpOnly-Cookie (`session_token`). Jede API-Anfrage sendet diesen Token als Bearer-Token im Authorization-Header.
 
-## Learn More
+**Ablauf:**
+1. Benutzer ruft eine geschützte Seite auf
+2. Middleware prüft das Cookie → kein Cookie: Redirect auf `/login`
+3. Nach erfolgreichem Login: Redirect auf `/dashboard`
+4. Logout löscht das Cookie und leitet auf `/login` weiter
 
-To learn more about Next.js, take a look at the following resources:
+---
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Permanente Links
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Alle CRUD-Elemente sind über permanente URLs direkt aufrufbar:
 
-## Deploy on Vercel
+### Lernende
+| Aktion | URL |
+|---|---|
+| Übersicht | `/lernende` |
+| Detail | `/lernende/[id]` |
+| Neu erfassen | `/lernende/manage` |
+| Bearbeiten | `/lernende/manage/[id]` |
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Kurse
+| Aktion | URL |
+|---|---|
+| Übersicht | `/kurse` |
+| Detail | `/kurse/[id]` |
+| Neu erfassen | `/kurse/manage` |
+| Bearbeiten | `/kurse/manage/[id]` |
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Dozenten
+| Aktion | URL |
+|---|---|
+| Übersicht | `/dozenten` |
+| Detail | `/dozenten/[id]` |
+| Neu erfassen | `/dozenten/manage` |
+| Bearbeiten | `/dozenten/manage/[id]` |
+
+### Lehrbetriebe
+| Aktion | URL |
+|---|---|
+| Übersicht | `/lehrbetriebe` |
+| Detail | `/lehrbetriebe/[id]` |
+| Neu erfassen | `/lehrbetriebe/manage` |
+| Bearbeiten | `/lehrbetriebe/manage/[id]` |
+
+### Länder
+| Aktion | URL |
+|---|---|
+| Übersicht | `/laender` |
+| Detail | `/laender/[id]` |
+| Neu erfassen | `/laender/manage` |
+| Bearbeiten | `/laender/manage/[id]` |
+
+---
+
+## Typischer Ablauf (Benutzer-Flow)
+
+### Neuen Kurs mit Lernenden einrichten
+
+```
+1. /dozenten/manage          → Dozent erfassen (falls noch nicht vorhanden)
+2. /lernende/manage          → Lernende erfassen
+3. /lehrbetriebe/manage      → Lehrbetrieb erfassen (optional)
+4. /lernende/manage/[id]     → Lehrbetrieb dem Lernenden zuweisen
+5. /kurse/manage             → Kurs erstellen, Dozent auswählen
+6. /kurse/manage/[id]        → Lernende in den Kurs einschreiben
+7. /kurse/manage/[id]        → Noten eintragen nach Kursabschluss
+```
+
+### Lernende verwalten
+
+```
+Lernende/r anlegen  →  /lernende/manage
+  ├── Grunddaten: Vorname, Nachname, Adresse, Land, E-Mail
+  ├── Optional: Lehrbetrieb + Beruf + Lehrdaten direkt beim Erstellen
+  └── Nach dem Erstellen: Kurse einschreiben via /lernende/manage/[id]
+
+Lernende/r bearbeiten  →  /lernende/manage/[id]
+  ├── Stammdaten anpassen
+  ├── Lehrbetrieb zuweisen / wechseln / entfernen
+  ├── Noten bearbeiten
+  ├── Kurse hinzufügen oder entfernen
+  └── Person löschen
+```
+
+### Lehrbetrieb mit Lernenden verwalten
+
+```
+Lehrbetrieb bearbeiten  →  /lehrbetriebe/manage/[id]
+  ├── Firmendaten anpassen
+  ├── Lernende dem Betrieb zuweisen (Dropdown + Beruf + Daten)
+  └── Lernende aus dem Betrieb entfernen
+```
+
+---
+
+## Beziehungen zwischen Entitäten
+
+```
+Dozent ──────────────── Kurs (1:n)
+                          │
+                          │  kurse_lernende (Note)
+                          │
+Lernende/r ───────────────┘
+    │
+    │  lehrbetrieb_lernende (Beruf, Start, Ende)
+    │
+Lehrbetrieb
+
+Lernende/r  ──── Land (n:1)
+Dozent      ──── Land (n:1)
+```
+
+---
+
+## Datenfluss
+
+Alle Seiten sind **Server Components** — Daten werden serverseitig via `fetchWithAuth()` geladen. Mutationen laufen über **Next.js Server Actions** (`actions.ts` pro Route):
+
+```
+Server Component (page.tsx)
+  └── lädt Daten via fetchWithAuth()
+  └── rendert Client Component (edit-form.tsx / create-form.tsx)
+        └── ruft Server Action bei Submit auf
+              └── PUT/POST/DELETE via fetchWithAuth()
+              └── revalidatePath() → Cache invalidieren
+              └── redirect() → zurück zur Detail- oder Listenansicht
+```
+
+Filterung auf den Übersichtsseiten ist **client-seitig** mit ~400ms Debounce. Die URL wird dabei aktualisiert, sodass gefilterte Ansichten als permanenter Link teilbar sind (z.B. `/lernende?nr_lehrbetrieb=2`).
