@@ -3,7 +3,7 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
 // Protects all routes except public paths — redirects unauthenticated users to /login
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
     const token = request.cookies.get('session_token')?.value;
 
     const publicPaths = ['/login', '/register', '/', '/favicon.ico', '/next.svg', '/vercel.svg'];
