@@ -10,6 +10,7 @@ export interface ActionState {
     success: boolean | null;
 }
 
+// Creates a new Dozent and redirects to the overview
 export async function createDozent(prevState: ActionState, formData: FormData): Promise<ActionState> {
     const dozent = {
         vorname: formData.get('vorname'),
@@ -38,6 +39,7 @@ export async function createDozent(prevState: ActionState, formData: FormData): 
     redirect('/dozenten');
 }
 
+// Updates all fields of an existing Dozent
 export async function updateDozent(prevState: ActionState, formData: FormData): Promise<ActionState> {
     const id = formData.get('id_dozent') as string;
 
@@ -69,6 +71,7 @@ export async function updateDozent(prevState: ActionState, formData: FormData): 
     redirect(`/dozenten/${id}`);
 }
 
+// Deletes a Dozent by ID and redirects to the overview
 export async function deleteDozent(id: number) {
     return await handleDelete('/dozenten', id, '/dozenten');
 }

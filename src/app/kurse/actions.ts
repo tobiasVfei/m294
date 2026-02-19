@@ -9,6 +9,7 @@ export interface ActionState {
     success: boolean | null;
 }
 
+// Creates a new course and redirects to the overview
 export async function createKurs(prevState: ActionState, formData: FormData): Promise<ActionState> {
     const kursData = {
         kursnummer: formData.get('kursnummer'),
@@ -33,6 +34,7 @@ export async function createKurs(prevState: ActionState, formData: FormData): Pr
     redirect('/kurse');
 }
 
+// Updates course data, saves all grades, and optionally enrolls a new student in one submission
 export async function updateKurs(prevState: ActionState, formData: FormData): Promise<ActionState> {
     const id = formData.get('id_kurs') as string;
 
@@ -60,6 +62,7 @@ export async function updateKurs(prevState: ActionState, formData: FormData): Pr
                 const linkId = key.replace('grade_link_id_', '');
                 const lernendeId = formData.get(`lernende_id_for_${linkId}`);
 
+                // Empty string from the input should be stored as null, not as ""
                 const noteValue = value && String(value).trim() !== "" ? String(value) : null;
 
                 await fetchWithAuth(`/kurse_lernende/${linkId}`, {
@@ -73,10 +76,12 @@ export async function updateKurs(prevState: ActionState, formData: FormData): Pr
             }
         }
 
+        // If a new student was selected via the enrollment dropdown, add them to this course
         const newStudentId = formData.get('add_lernende_id');
         const newStudentNoteInput = formData.get('add_lernende_note');
 
         if (newStudentId && newStudentId !== "") {
+            // Empty string should be stored as null, not as ""
             const newNoteValue = newStudentNoteInput && String(newStudentNoteInput).trim() !== ""
                 ? String(newStudentNoteInput)
                 : null;
@@ -101,6 +106,7 @@ export async function updateKurs(prevState: ActionState, formData: FormData): Pr
     redirect(`/kurse/${id}`);
 }
 
+// Removes a student from a course by deleting the join record
 export async function removeStudentFromKurs(prevState: ActionState, formData: FormData): Promise<ActionState> {
     const linkId = formData.get('link_id') as string;
     const kursId = formData.get('kurs_id') as string;
@@ -118,6 +124,7 @@ export async function removeStudentFromKurs(prevState: ActionState, formData: Fo
     redirect(`/kurse/manage/${kursId}`);
 }
 
+// Deletes a course by ID and redirects to the overview
 export async function deleteKurs(id: string | number) {
     try {
         await fetchWithAuth(`/kurse/${id}`, {

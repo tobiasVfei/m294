@@ -39,6 +39,7 @@ export default function DataRow({ id, title, subtitle, details, info, viewHref, 
             </td>
             <td className="px-6 py-4 text-right">
                 <div className="flex justify-end items-center gap-4">
+                    {/* stopPropagation prevents link clicks from also triggering the row's onClick handler */}
                     <Link
                         href={viewHref}
                         onClick={(e) => e.stopPropagation()}

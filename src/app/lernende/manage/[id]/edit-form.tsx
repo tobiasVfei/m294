@@ -12,6 +12,7 @@ export default function EditLernendeForm({ person, allKurse, kursLinks, laender,
     const [removeState, removeAction] = useActionState(removeKursEnrollment, initialState);
     const [addState, addAction] = useActionState(addKursToLernende, initialState);
 
+    // Use a Set for O(1) lookup when filtering out already-enrolled courses
     const assignedKursIds = new Set(kursLinks.map((l: any) => l.nr_kurs));
     const availableKurse = allKurse.filter((k: any) => !assignedKursIds.has(k.id_kurs));
 

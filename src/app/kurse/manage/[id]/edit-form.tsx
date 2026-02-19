@@ -123,6 +123,7 @@ export default function EditKursForm({ kurs, allLernende, belegungen, allDozente
                             <label className="input-label !text-blue-700">Neu einschreiben</label>
                             <select name="add_lernende_id" className="input-field bg-white">
                                 <option value="">Wählen...</option>
+                                {/* Only show students not already enrolled in this course */}
                                 {allLernende
                                     .filter((l: any) => !belegungen.some((b: any) => b.nr_lernende === l.id_lernende))
                                     .sort((a: any, b: any) => a.nachname.localeCompare(b.nachname))

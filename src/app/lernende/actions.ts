@@ -27,8 +27,7 @@ export async function createLernende(prevState: ActionState, formData: FormData)
     };
 
     try {
-        // We use fetchWithAuth directly here instead of handleCreate because we need
-        // the returned ID to create the Lehrbetrieb relationship right after
+        // Create the student and capture the returned record to extract the new ID
         const created = await fetchWithAuth('/lernende', {
             method: 'POST',
             body: JSON.stringify(lernende),
