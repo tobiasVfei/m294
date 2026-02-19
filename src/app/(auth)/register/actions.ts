@@ -3,6 +3,7 @@
 import { redirect } from 'next/navigation';
 import { postPublic } from '@/lib/api';
 
+// Creates a new user account via the public /benutzer endpoint and redirects to login
 export async function register(prevState: any, formData: FormData) {
     const email = formData.get('email');
     const password = formData.get('password');

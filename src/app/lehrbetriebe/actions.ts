@@ -7,6 +7,7 @@ import { redirect } from 'next/navigation';
 
 export type ActionState = ActionStatus;
 
+// Creates a new Lehrbetrieb and redirects to the overview
 export async function createLehrbetrieb(prevState: ActionState, formData: FormData): Promise<ActionState> {
     const lehrbetrieb = {
         firma: formData.get('firma'),
@@ -18,6 +19,7 @@ export async function createLehrbetrieb(prevState: ActionState, formData: FormDa
     return await handleCreate('/lehrbetriebe', lehrbetrieb, '/lehrbetriebe');
 }
 
+// Updates all fields of an existing Lehrbetrieb
 export async function updateLehrbetrieb(prevState: ActionState, formData: FormData): Promise<ActionState> {
     const id = formData.get('id_lehrbetrieb') as string;
 
@@ -31,6 +33,7 @@ export async function updateLehrbetrieb(prevState: ActionState, formData: FormDa
     return await handleUpdate('/lehrbetriebe', id, lehrbetrieb, '/lehrbetriebe');
 }
 
+// Deletes a Lehrbetrieb by ID and redirects to the overview
 export async function deleteLehrbetrieb(id: number) {
     return await handleDelete('/lehrbetriebe', id, '/lehrbetriebe');
 }

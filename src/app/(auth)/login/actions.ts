@@ -4,6 +4,7 @@ import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { postPublic } from '@/lib/api';
 
+// Authenticates the user and stores the JWT as an httpOnly cookie
 export async function login(prevState: any, formData: FormData) {
     const email = formData.get('email');
     const password = formData.get('password');

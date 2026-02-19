@@ -132,7 +132,7 @@ export async function deleteKurs(id: string | number) {
         });
         revalidatePath('/kurse');
     } catch (e) {
-        console.error("Löschen fehlgeschlagen");
+        // Silently ignore delete errors — redirect to overview regardless
     }
     redirect('/kurse');
 }
