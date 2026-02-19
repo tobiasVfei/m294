@@ -1,6 +1,5 @@
 'use server';
 
-import { handleDelete } from '@/lib/actions-utils';
 import { fetchWithAuth } from '@/lib/api';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
@@ -191,7 +190,13 @@ export async function addKursToLernende(prevState: ActionState, formData: FormDa
     redirect(`/lernende/manage/${lernendeId}`);
 }
 
-export async function deleteLernende(id: number) {
-    await handleDelete('/lernende', id, '/lernende');
+// Deletes a student by ID — returns an error state if deletion fails
+export async function deleteLernende(id: number): Promise<{ error: string; success: false } | void> {
+    try {
+        await fetchWithAuth(`/lernende/${id}`, { method: 'DELETE' });
+    } catch {
+        return { error: 'Diese Person kann nicht gelöscht werden.', success: false };
+    }
+    revalidatePath('/lernende');
     redirect('/lernende');
 }

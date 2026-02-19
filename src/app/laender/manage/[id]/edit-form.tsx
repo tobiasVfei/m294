@@ -8,15 +8,14 @@ import { Icons } from '@/lib/icons';
 export default function EditLandForm({ land }: { land: any }) {
     const initialState: ActionState = { error: null, success: null };
     const [state, formAction, isPending] = useActionState(updateLand, initialState);
-
-    const deleteWithId = deleteLand.bind(null, land.id_country);
+    const [deleteState, deleteFormAction] = useActionState(deleteLand.bind(null, land.id_country), initialState);
 
     return (
         <div className="card max-w-md">
             <div className="flex justify-between items-center mb-6">
                 <h1 className="text-2xl font-bold">Land bearbeiten</h1>
 
-                <form action={deleteWithId}>
+                <form action={deleteFormAction}>
                     <button
                         type="submit"
                         className="text-red-600 hover:text-red-800 text-sm border border-red-200 bg-red-50 px-3 py-1 rounded cursor-pointer"
@@ -31,6 +30,7 @@ export default function EditLandForm({ land }: { land: any }) {
                 </form>
             </div>
 
+            {deleteState?.error && <div className="error-box mb-4">{deleteState.error}</div>}
             {state?.error && <div className="error-box mb-4">{state.error}</div>}
 
             <form action={formAction} className="space-y-4">

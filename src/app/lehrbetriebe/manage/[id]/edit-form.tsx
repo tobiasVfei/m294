@@ -13,6 +13,7 @@ export default function EditLehrbetriebForm({ lehrbetrieb, allLernende, lehrLink
 }) {
     const initialState: ActionState = { error: null, success: null };
     const [state, formAction, isPending] = useActionState(updateLehrbetrieb, initialState);
+    const [deleteState, deleteFormAction] = useActionState(deleteLehrbetrieb.bind(null, lehrbetrieb.id_lehrbetrieb), initialState);
     const [removeState, removeAction] = useActionState(removeLernendeFromBetrieb, initialState);
     const [addState, addAction] = useActionState(addLernendeToLehrbetrieb, initialState);
 
@@ -27,7 +28,7 @@ export default function EditLehrbetriebForm({ lehrbetrieb, allLernende, lehrLink
             <div className="flex justify-between items-center mb-10 pb-6 border-b border-gray-100">
                 <h1 className="text-3xl font-black text-gray-900 uppercase tracking-tight">Lehrbetrieb bearbeiten</h1>
 
-                <form action={deleteLehrbetrieb.bind(null, lehrbetrieb.id_lehrbetrieb)}>
+                <form action={deleteFormAction}>
                     <button
                         type="submit"
                         className="text-red-600 hover:bg-red-50 px-4 py-2 rounded-xl border border-red-100 font-bold text-xs uppercase flex items-center gap-2"
@@ -38,6 +39,7 @@ export default function EditLehrbetriebForm({ lehrbetrieb, allLernende, lehrLink
                 </form>
             </div>
 
+            {deleteState?.error && <div className="bg-red-50 text-red-700 p-4 rounded-xl mb-8 font-bold border border-red-100">{deleteState.error}</div>}
             {state?.error && <div className="bg-red-50 text-red-700 p-4 rounded-xl mb-8 font-bold border border-red-100">{state.error}</div>}
             {removeState?.error && <div className="bg-red-50 text-red-700 p-4 rounded-xl mb-8 font-bold border border-red-100">{removeState.error}</div>}
             {addState?.error && <div className="bg-red-50 text-red-700 p-4 rounded-xl mb-8 font-bold border border-red-100">{addState.error}</div>}

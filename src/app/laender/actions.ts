@@ -1,6 +1,9 @@
 'use server';
 
-import { handleCreate, handleUpdate, handleDelete, ActionStatus } from '@/lib/actions-utils';
+import { handleCreate, handleUpdate, ActionStatus } from '@/lib/actions-utils';
+import { fetchWithAuth } from '@/lib/api';
+import { revalidatePath } from 'next/cache';
+import { redirect } from 'next/navigation';
 
 export type ActionState = ActionStatus;
 
@@ -24,7 +27,13 @@ export async function updateLand(prevState: ActionState, formData: FormData): Pr
     return await handleUpdate('/laender', id, land, '/laender');
 }
 
-// Deletes a country by ID and redirects to the overview
-export async function deleteLand(id: number) {
-    return await handleDelete('/laender', id, '/laender');
+// Deletes a country by ID — returns an error state if the country is still in use (409)
+export async function deleteLand(id: number, prevState: ActionState, _formData: FormData): Promise<ActionState> {
+    try {
+        await fetchWithAuth(`/laender/${id}`, { method: 'DELETE' });
+    } catch {
+        return { error: 'Dieses Land kann nicht gelöscht werden – es wird noch von Lernenden oder Dozenten verwendet.', success: false };
+    }
+    revalidatePath('/laender');
+    redirect('/laender');
 }

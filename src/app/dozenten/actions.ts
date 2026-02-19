@@ -1,6 +1,5 @@
 'use server';
 
-import { handleDelete } from '@/lib/actions-utils';
 import { fetchWithAuth } from '@/lib/api';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
@@ -71,7 +70,13 @@ export async function updateDozent(prevState: ActionState, formData: FormData): 
     redirect(`/dozenten/${id}`);
 }
 
-// Deletes a Dozent by ID and redirects to the overview
-export async function deleteDozent(id: number) {
-    return await handleDelete('/dozenten', id, '/dozenten');
+// Deletes a Dozent by ID — returns an error state if the Dozent still has active courses (409)
+export async function deleteDozent(id: number, prevState: ActionState, _formData: FormData): Promise<ActionState> {
+    try {
+        await fetchWithAuth(`/dozenten/${id}`, { method: 'DELETE' });
+    } catch {
+        return { error: 'Dieser Dozent kann nicht gelöscht werden – er leitet noch aktive Kurse.', success: false };
+    }
+    revalidatePath('/dozenten');
+    redirect('/dozenten');
 }

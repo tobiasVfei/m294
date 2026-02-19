@@ -14,12 +14,13 @@ interface EditDozentFormProps {
 export default function EditDozentForm({ dozent, laender }: EditDozentFormProps) {
     const initialState: ActionState = { error: null, success: null };
     const [state, formAction, isPending] = useActionState(updateDozent, initialState);
+    const [deleteState, deleteFormAction] = useActionState(deleteDozent.bind(null, dozent.id_dozent), initialState);
 
     return (
         <div className="card max-w-4xl">
             <div className="flex justify-between items-center mb-8 pb-4 border-b">
                 <h1 className="text-2xl font-black uppercase tracking-tight">Dozentenprofil bearbeiten</h1>
-                <form action={deleteDozent.bind(null, dozent.id_dozent)}>
+                <form action={deleteFormAction}>
                     <button
                         type="submit"
                         className="text-red-600 hover:bg-red-50 px-4 py-2 rounded-xl border border-red-100 font-bold text-xs uppercase"
@@ -30,6 +31,7 @@ export default function EditDozentForm({ dozent, laender }: EditDozentFormProps)
                 </form>
             </div>
 
+            {deleteState?.error && <div className="error-box mb-6">{deleteState.error}</div>}
             {state?.error && <div className="error-box mb-6">{state.error}</div>}
 
             <form action={formAction} className="space-y-8">

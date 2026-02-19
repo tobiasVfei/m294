@@ -1,6 +1,6 @@
 'use client';
 
-import { useActionState } from 'react';
+import { useActionState, useState } from 'react';
 import { updateLernende, deleteLernende, removeKursEnrollment, addKursToLernende, ActionState } from '../../actions';
 import Link from 'next/link';
 import { Icons } from '@/lib/icons';
@@ -11,6 +11,7 @@ export default function EditLernendeForm({ person, allKurse, kursLinks, laender,
     const [state, formAction, isPending] = useActionState(updateLernende, initialState);
     const [removeState, removeAction] = useActionState(removeKursEnrollment, initialState);
     const [addState, addAction] = useActionState(addKursToLernende, initialState);
+    const [deleteError, setDeleteError] = useState<string | null>(null);
 
     // Use a Set for O(1) lookup when filtering out already-enrolled courses
     const assignedKursIds = new Set(kursLinks.map((l: any) => l.nr_kurs));
@@ -158,13 +159,21 @@ export default function EditLernendeForm({ person, allKurse, kursLinks, laender,
                 </FormSection>
 
                 <div className="flex justify-between items-center pt-10 border-t border-gray-100">
-                    <button
-                        type="button"
-                        onClick={() => { if(confirm('Person löschen?')) deleteLernende(person.id_lernende); }}
-                        className="text-red-600 hover:bg-red-50 px-4 py-2 rounded-xl border border-red-100 font-bold text-xs uppercase flex items-center gap-2"
-                    >
-                        <Icons.Trash size={14} /> Löschen
-                    </button>
+                    <div className="flex flex-col gap-2">
+                        <button
+                            type="button"
+                            onClick={async () => {
+                                if (confirm('Person löschen?')) {
+                                    const result = await deleteLernende(person.id_lernende);
+                                    if (result?.error) setDeleteError(result.error);
+                                }
+                            }}
+                            className="text-red-600 hover:bg-red-50 px-4 py-2 rounded-xl border border-red-100 font-bold text-xs uppercase flex items-center gap-2"
+                        >
+                            <Icons.Trash size={14} /> Löschen
+                        </button>
+                        {deleteError && <p className="text-red-600 text-xs font-bold">{deleteError}</p>}
+                    </div>
                     <div className="flex gap-4">
                         <button type="submit" disabled={isPending} className="btn-primary !w-auto px-12">
                             {isPending ? 'Speichert...' : 'Profil aktualisieren'}

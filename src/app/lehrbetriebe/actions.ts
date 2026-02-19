@@ -1,6 +1,6 @@
 'use server';
 
-import { handleCreate, handleUpdate, handleDelete, ActionStatus } from '@/lib/actions-utils';
+import { handleCreate, handleUpdate, ActionStatus } from '@/lib/actions-utils';
 import { fetchWithAuth } from '@/lib/api';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
@@ -33,9 +33,15 @@ export async function updateLehrbetrieb(prevState: ActionState, formData: FormDa
     return await handleUpdate('/lehrbetriebe', id, lehrbetrieb, '/lehrbetriebe');
 }
 
-// Deletes a Lehrbetrieb by ID and redirects to the overview
-export async function deleteLehrbetrieb(id: number) {
-    return await handleDelete('/lehrbetriebe', id, '/lehrbetriebe');
+// Deletes a Lehrbetrieb by ID — returns an error state if it still has assigned students (409)
+export async function deleteLehrbetrieb(id: number, prevState: ActionState, _formData: FormData): Promise<ActionState> {
+    try {
+        await fetchWithAuth(`/lehrbetriebe/${id}`, { method: 'DELETE' });
+    } catch {
+        return { error: 'Dieser Lehrbetrieb kann nicht gelöscht werden – es sind noch Lernende zugewiesen.', success: false };
+    }
+    revalidatePath('/lehrbetriebe');
+    redirect('/lehrbetriebe');
 }
 
 // Removes a single student from this Lehrbetrieb by deleting the link record
