@@ -77,7 +77,7 @@ export default async function Page({
             item.email?.toLowerCase().includes(searchTerm);
 
         const matchesLand = !landFilter || String(item.nr_land) === String(landFilter);
-        const matchesLehrbetrieb = !lehrbetriebFilter || String(lehrRel?.nr_lehrbetrieb) === String(lehrbetriebFilter);
+        const matchesLehrbetrieb = !lehrbetriebFilter || (lehrRel != null && String(lehrRel.nr_lehrbetrieb) === String(lehrbetriebFilter));
         const matchesBeruf = !berufFilter || lehrRel?.beruf === berufFilter;
 
         const matchesKurs = !kursFilter || safeKursLinks.some(kl =>
@@ -136,7 +136,7 @@ export default async function Page({
                         key={person.id_lernende}
                         id={person.id_lernende}
                         title={`${person.vorname} ${person.nachname}`}
-                        subtitle={person.geschlecht === 'w' ? 'Weiblich' : 'Männlich'}
+                        subtitle={person.geschlecht === 'W' ? 'Weiblich' : 'Männlich'}
                         details={person.email}
                         info={person.ort || '-'}
                         viewHref={`/lernende/${person.id_lernende}`}

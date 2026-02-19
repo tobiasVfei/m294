@@ -40,8 +40,8 @@ export default function CreateLernendeForm({ laender, lehrbetriebe }: { laender:
                         <div>
                             <label className="input-label">Geschlecht</label>
                             <select name="geschlecht" className="input-field">
-                                <option value="m">Männlich</option>
-                                <option value="w">Weiblich</option>
+                                <option value="M">Männlich</option>
+                                <option value="W">Weiblich</option>
                             </select>
                         </div>
                         <div>

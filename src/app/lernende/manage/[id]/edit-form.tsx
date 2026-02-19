@@ -48,8 +48,8 @@ export default function EditLernendeForm({ person, allKurse, kursLinks, laender,
                         <div>
                             <label className="input-label">Geschlecht</label>
                             <select name="geschlecht" defaultValue={person.geschlecht} className="input-field">
-                                <option value="m">Männlich</option>
-                                <option value="w">Weiblich</option>
+                                <option value="M">Männlich</option>
+                                <option value="W">Weiblich</option>
                             </select>
                         </div>
                         <div><label className="input-label">Geburtsdatum</label><input type="date" name="birthdate" defaultValue={person.birthdate?.split('T')[0]} className="input-field" /></div>

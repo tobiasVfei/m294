@@ -115,7 +115,7 @@ export async function removeStudentFromKurs(prevState: ActionState, formData: Fo
         return { error: e.message, success: null };
     }
 
-    redirect(`/kurse/${kursId}/manage`);
+    redirect(`/kurse/manage/${kursId}`);
 }
 
 export async function deleteKurs(id: string | number) {

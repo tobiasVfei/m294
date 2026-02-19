@@ -222,7 +222,7 @@ export default async function LernendeDetailsPage({ params }: { params: Promise<
                             />
                             <DetailField
                                 label="Geschlecht"
-                                value={person.geschlecht === 'w' ? 'Weiblich' : 'Männlich'}
+                                value={person.geschlecht === 'W' ? 'Weiblich' : 'Männlich'}
                                 icon={<Icons.User size={14} />}
                             />
                         </DetailSection>
